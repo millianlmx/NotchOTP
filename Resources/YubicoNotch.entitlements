@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	Required for the YubiKey's OATH applet over USB-C smart card.
+	Only enforced once the app is sandboxed; keep it here so enabling
+	com.apple.security.app-sandbox later does not silently break the key.
+	-->
+	<key>com.apple.security.smartcard</key>
+	<true/>
+</dict>
+</plist>
