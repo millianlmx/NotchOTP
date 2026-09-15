@@ -10,12 +10,12 @@ build it, and nothing here changes that.
 
 | Piece | Where | State |
 | --- | --- | --- |
-| Sandbox entitlements | `Resources/YubicoNotch-AppStore.entitlements` | sandbox + smart card; verified against a real key |
-| Xcode project (generated) | `project.yml` → `YubicoNotch.xcodeproj` | builds and archives; not committed |
+| Sandbox entitlements | `Resources/NotchOTP-AppStore.entitlements` | sandbox + smart card; verified against a real key |
+| Xcode project (generated) | `project.yml` → `NotchOTP.xcodeproj` | builds and archives; not committed |
 | Archive + export | `Scripts/archive-app.sh` | archive, export the `.pkg`, optional upload |
 | Export options | `Scripts/ExportOptions-AppStore.plist` | `app-store-connect`, `Apple Distribution` |
 | Demo mode in release | `-demo` launch argument | compiled into the release build, on purpose |
-| Bundle metadata | `Resources/Info.plist` | identifier `app.yubiconotch`, category `public.app-category.utilities`, `LSUIElement` |
+| Bundle metadata | `Resources/Info.plist` | identifier `app.notchotp`, category `public.app-category.utilities`, `LSUIElement` |
 
 **Measured on macOS 26** — the sandbox does not cost the app anything:
 
@@ -33,7 +33,7 @@ and no nested framework to sign (the kit is a static library, like SwiftPM produ
 ## What only you can do
 
 1. **Apple Developer Program**, paid, and Xcode signed into it.
-2. **Register the bundle identifier** `app.yubiconotch` in Certificates, Identifiers &
+2. **Register the bundle identifier** `app.notchotp` in Certificates, Identifiers &
    Profiles, and create the **app record** in App Store Connect.
 3. **Run the archive** — the certificates and the Mac App Store provisioning profile are
    created on the way:
@@ -60,12 +60,12 @@ and no nested framework to sign (the kit is a static library, like SwiftPM produ
 the classic rejection. The `-demo` argument swaps in a fake key and a fake sensor, and it is
 now compiled into the release build — say so in *Notes for Review*:
 
-> YubicoNotch needs a YubiKey. To try it without one:
-> `open -a YubicoNotch --args -demo` — the panel then lists four demo accounts, and the
-> fingerprint prompt is simulated. `open -a YubicoNotch --args -demo -confirm` opens the
+> NotchOTP needs a YubiKey. To try it without one:
+> `open -a NotchOTP --args -demo` — the panel then lists four demo accounts, and the
+> fingerprint prompt is simulated. `open -a NotchOTP --args -demo -confirm` opens the
 > panel and confirms the first account straight away.
 
-**The name.** "YubicoNotch" contains Yubico's trademark, and Apple rejects app names that
+**The name.** "NotchOTP" contains Yubico's trademark, and Apple rejects app names that
 use someone else's mark. Decide before spending the review round: rename (the repository,
 the bundle identifier, `CFBundleName`, the README, the `.entitlements` and the docs all
 carry it) or obtain Yubico's blessing.

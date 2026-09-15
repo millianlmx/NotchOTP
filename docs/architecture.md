@@ -1,7 +1,7 @@
 # How it works
 
-Two targets in one package: `YubicoNotchKit` (all the logic and the SwiftUI views) and
-`YubicoNotch` (twenty lines: `NSApplication` + `AppController`). No `.xcodeproj`:
+Two targets in one package: `NotchOTPKit` (all the logic and the SwiftUI views) and
+`NotchOTP` (twenty lines: `NSApplication` + `AppController`). No `.xcodeproj`:
 SwiftPM builds, `Scripts/build-app.sh` assembles the bundle and signs it. macOS 14 minimum,
 Swift 6, a single dependency — YubiKit, pinned at 1.3.0.
 
@@ -24,7 +24,7 @@ Nothing on this path is computed ahead of time: opening only reads names.
 ## The layers
 
 ```
-Sources/YubicoNotchKit/
+Sources/NotchOTPKit/
   Model/   OATHAccount, OATHCode, OATHFailure, NewCredential (otpauth:// parsing)
   Core/    NotchGeometry, CodeClock, Clipboard, Settings, Base32, BarcodeScanner,
            LaunchAtLogin, AppInfo, Log
@@ -152,7 +152,7 @@ only way to see the leak if it comes back.
 
 ## Smart card access
 
-`Resources/YubicoNotch.entitlements` carries `com.apple.security.smartcard`, and
+`Resources/NotchOTP.entitlements` carries `com.apple.security.smartcard`, and
 `Scripts/build-app.sh` signs ad hoc. This is not decoration: measured on macOS 26, an
 **unsigned** binary sees `TKSmartCardSlotManager.default` as `nil` even when the YubiKey
 is plugged in and the reader is listed by the system — and YubiKit then crashes on

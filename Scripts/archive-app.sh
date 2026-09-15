@@ -6,7 +6,7 @@
 #
 # Needs: Xcode, `xcodegen` (brew install xcodegen), a paid Apple Developer Program account
 # with Xcode signed in, an app record in App Store Connect, and the bundle identifier
-# app.yubiconotch registered to that team. See docs/app-store.md.
+# app.notchotp registered to that team. See docs/app-store.md.
 #
 # Day-to-day building does not need any of this: Scripts/build-app.sh is faster and does not
 # involve Xcode at all.
@@ -15,8 +15,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 TEAM_ID="${TEAM_ID:?Set TEAM_ID to your Apple Developer team identifier}"
-BUNDLE_ID="app.yubiconotch"
-ARCHIVE="build/YubicoNotch.xcarchive"
+BUNDLE_ID="app.notchotp"
+ARCHIVE="build/NotchOTP.xcarchive"
 EXPORT="build/export"
 
 command -v xcodegen >/dev/null || {
@@ -29,7 +29,7 @@ xcodegen generate
 
 # -allowProvisioningUpdates lets Xcode create or refresh the Mac App Store profile and the
 # distribution certificate on your account. It is what the *user* runs, on their own team.
-xcodebuild -project YubicoNotch.xcodeproj -scheme YubicoNotch \
+xcodebuild -project NotchOTP.xcodeproj -scheme NotchOTP \
   -configuration Release \
   -destination 'generic/platform=macOS' \
   -archivePath "$ARCHIVE" \

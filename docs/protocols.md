@@ -48,7 +48,7 @@ state (no error banner).
 
 **0xa1 is the command that counts**: it lists the credentials **without computing a single
 code**. It is what makes the "no code without authorization" model possible — and the reason
-YubicoNotch never uses `calculateCredentialCodes()`, which would compute everything at once.
+NotchOTP never uses `calculateCredentialCodes()`, which would compute everything at once.
 
 ## Computing a code
 
@@ -79,7 +79,7 @@ The OATH applet can be protected. The password never travels as such: it is deri
 the applet is closed, every read answers `securityConditionNotSatisfied`, which the app maps
 to `OATHFailure.passwordRequired`.
 
-YubicoNotch stores the **password** (not the derived key) in the session keychain, and
+NotchOTP stores the **password** (not the derived key) in the session keychain, and
 replays it to reopen the applet. The biometry-protected keychain
 (`SecAccessControl` + `kSecUseDataProtectionKeychain`) is not usable here: it requires an app
 signed with a profile and returns `errSecMissingEntitlement` (-34018) on an ad hoc signature.
@@ -94,7 +94,7 @@ otpauth://totp/Issuer:account?secret=BASE32&issuer=Issuer&algorithm=SHA1&digits=
 otpauth://hotp/account?secret=BASE32&counter=0
 ```
 
-YubicoNotch's parsing (`NewCredential.parse`) is **written by hand, without `URLComponents`**:
+NotchOTP's parsing (`NewCredential.parse`) is **written by hand, without `URLComponents`**:
 re-encoding a secret breaks it, and a URI can arrive from an imperfect QR code.
 
 - in the *query*, `+` decodes as a space (never valid in base32); in the *label* (the path),

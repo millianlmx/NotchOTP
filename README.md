@@ -1,4 +1,4 @@
-# YubicoNotch
+# NotchOTP
 
 > One-time codes in your Mac's notch — and a fingerprint for each one.
 
@@ -55,13 +55,13 @@ syncs, and **a code shown once does not come back without a new gesture**.
 ## Install
 
 ```bash
-git clone https://github.com/millianlmx/yubico_notch.git
-cd yubico_notch
+git clone https://github.com/millianlmx/NotchOTP.git
+cd NotchOTP
 ./Scripts/build-app.sh
-open build/YubicoNotch.app
+open build/NotchOTP.app
 ```
 
-Drag `YubicoNotch.app` to **Applications** to keep it, then enable *Launch at login* in the
+Drag `NotchOTP.app` to **Applications** to keep it, then enable *Launch at login* in the
 settings — it will start quietly in the menu bar.
 
 There is no `.xcodeproj`: SwiftPM builds, and the script assembles and signs the bundle. One
@@ -74,7 +74,7 @@ ID):
 
 ```bash
 ./Scripts/build-app.sh
-open build/YubicoNotch.app --args -demo
+open build/NotchOTP.app --args -demo
 ```
 
 The demo is compiled into the release build on purpose: it is how you try the app before
@@ -134,7 +134,7 @@ would rather never see a biometric prompt.
 If a confirmation ever went through without you touching the sensor, the log would say so:
 
 ```bash
-log show --last 2m --predicate 'subsystem == "app.yubiconotch"' --style compact \
+log show --last 2m --predicate 'subsystem == "app.notchotp"' --style compact \
   | grep -E 'evaluatePolicy|fresh biometric'
 ```
 
@@ -175,7 +175,7 @@ respect *Reduce Motion*.
 
 ## How it works
 
-Two SwiftPM targets: `YubicoNotchKit` (all the logic and the views) and a twenty-line
+Two SwiftPM targets: `NotchOTPKit` (all the logic and the views) and a twenty-line
 executable. The details are in **[`docs/architecture.md`](docs/architecture.md)** — the
 protocol seams that make the service testable without hardware, the state machine, the
 execution model, the panel and the pointer, the embedded biometrics, the smart-card
@@ -208,13 +208,13 @@ other hand `swift test` cannot talk to the key at all (unsigned test binary), he
 `-confirm` flag, which exercises the real path:
 
 ```bash
-open build/YubicoNotch.app --args -confirm
+open build/NotchOTP.app --args -confirm
 ```
 
 **See what is going on** — everything is logged to the unified log:
 
 ```bash
-log show --last 2m --predicate 'subsystem == "app.yubiconotch"' --style compact
+log show --last 2m --predicate 'subsystem == "app.notchotp"' --style compact
 ```
 
 ## Support

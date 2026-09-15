@@ -1,6 +1,6 @@
 # XcodeGen spec — the source of truth for the Xcode project.
 #
-#   xcodegen generate      # writes YubicoNotch.xcodeproj (not committed)
+#   xcodegen generate      # writes NotchOTP.xcodeproj (not committed)
 #
 # SwiftPM stays the source of truth for the code: this file only exists because the Mac App
 # Store pipeline is built around an Xcode target — `xcodebuild archive` then `-exportArchive`
@@ -9,7 +9,7 @@
 #
 # See docs/app-store.md.
 
-name: YubicoNotch
+name: NotchOTP
 
 options:
   bundleIdPrefix: app
@@ -36,38 +36,38 @@ settings:
 targets:
   # A static library, like SwiftPM produces: nothing to embed, nothing extra to sign, and
   # no nested bundle for the App Store profile to worry about.
-  YubicoNotchKit:
+  NotchOTPKit:
     type: library.static
     platform: macOS
     sources:
-      - path: Sources/YubicoNotchKit
+      - path: Sources/NotchOTPKit
     dependencies:
       - package: yubikit-swift
         product: YubiKit
     settings:
       base:
-        PRODUCT_NAME: YubicoNotchKit
+        PRODUCT_NAME: NotchOTPKit
         SKIP_INSTALL: YES
 
-  YubicoNotch:
+  NotchOTP:
     type: application
     platform: macOS
     sources:
-      - path: Sources/YubicoNotch
+      - path: Sources/NotchOTP
       # Only the icon: Info.plist goes through INFOPLIST_FILE and the entitlements through
       # CODE_SIGN_ENTITLEMENTS, neither of which belongs in Resources.
       - path: Resources/AppIcon.icns
         buildPhase: resources
     dependencies:
-      - target: YubicoNotchKit
+      - target: NotchOTPKit
       # Linked again on purpose: a static library does not carry its own dependencies.
       - package: yubikit-swift
         product: YubiKit
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.yubiconotch
+        PRODUCT_BUNDLE_IDENTIFIER: app.notchotp
         INFOPLIST_FILE: Resources/Info.plist
-        CODE_SIGN_ENTITLEMENTS: Resources/YubicoNotch-AppStore.entitlements
+        CODE_SIGN_ENTITLEMENTS: Resources/NotchOTP-AppStore.entitlements
         CODE_SIGN_STYLE: Automatic
         # Menu bar only, and an accessory app: no Dock icon to declare.
         LSApplicationCategoryType: public.app-category.utilities

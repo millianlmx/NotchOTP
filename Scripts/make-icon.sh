@@ -12,7 +12,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 ICNS="Resources/AppIcon.icns"
-PREVIEW="/tmp/YubicoNotch-AppIcon-512.png"
+PREVIEW="/tmp/NotchOTP-AppIcon-512.png"
 WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 

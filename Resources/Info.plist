@@ -5,17 +5,17 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>fr</string>
 	<key>CFBundleDisplayName</key>
-	<string>YubicoNotch</string>
+	<string>NotchOTP</string>
 	<key>CFBundleExecutable</key>
-	<string>YubicoNotch</string>
+	<string>NotchOTP</string>
 	<key>CFBundleIconFile</key>
 	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
-	<string>app.yubiconotch</string>
+	<string>app.notchotp</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>YubicoNotch</string>
+	<string>NotchOTP</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>

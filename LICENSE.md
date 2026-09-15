@@ -2,7 +2,7 @@
 
 <https://polyformproject.org/licenses/noncommercial/1.0.0>
 
-Required Notice: Copyright Millian Lamiaux (https://github.com/millianlmx/yubico_notch)
+Required Notice: Copyright Millian Lamiaux (https://github.com/millianlmx/NotchOTP)
 
 ## Acceptance
 

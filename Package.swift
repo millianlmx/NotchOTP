@@ -2,28 +2,28 @@
 import PackageDescription
 
 let package = Package(
-    name: "YubicoNotch",
+    name: "NotchOTP",
     platforms: [.macOS(.v14)],
     products: [
-        .executable(name: "YubicoNotch", targets: ["YubicoNotch"]),
-        .library(name: "YubicoNotchKit", targets: ["YubicoNotchKit"]),
+        .executable(name: "NotchOTP", targets: ["NotchOTP"]),
+        .library(name: "NotchOTPKit", targets: ["NotchOTPKit"]),
     ],
     dependencies: [
         .package(url: "https://github.com/Yubico/yubikit-swift", from: "1.3.0")
     ],
     targets: [
         .target(
-            name: "YubicoNotchKit",
+            name: "NotchOTPKit",
             dependencies: [.product(name: "YubiKit", package: "yubikit-swift")]
         ),
         .executableTarget(
-            name: "YubicoNotch",
-            dependencies: ["YubicoNotchKit"]
+            name: "NotchOTP",
+            dependencies: ["NotchOTPKit"]
         ),
         .testTarget(
-            name: "YubicoNotchKitTests",
+            name: "NotchOTPKitTests",
             dependencies: [
-                "YubicoNotchKit",
+                "NotchOTPKit",
                 .product(name: "YubiKit", package: "yubikit-swift"),
             ]
         ),
