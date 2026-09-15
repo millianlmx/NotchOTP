@@ -1,136 +1,135 @@
-# Protocoles
+# Protocols
 
-Ce que l'app envoie à la clé, ce qu'elle en reçoit, et ce qu'elle refuse d'avaler.
+What the app sends to the key, what it gets back, and what it refuses to swallow.
 
-## Ce qui vit sur la clé
+## What lives on the key
 
-Une YubiKey expose une **applet OATH** : une petite base d'identifiants, chacun étant un
-secret plus des métadonnées.
+A YubiKey exposes an **OATH applet**: a small database of credentials, each one a secret plus
+metadata.
 
-| Champ | Rôle |
+| Field | Role |
 | --- | --- |
-| id | identifiant du credential sur la clé. Yubico le dérive de l'émetteur et du nom : renommer un compte **change son id** |
-| issuer / name | le libellé. C'est tout ce que l'app lit sans autorisation |
-| type | TOTP (période 30 ou 60 s) ou HOTP (compteur) |
-| algorithm | SHA-1, SHA-256 ou SHA-512 |
-| digits | 6 ou 8 |
-| requiresTouch | la clé exigera un contact physique pour calculer ce code |
+| id | the credential's identifier on the key. Yubico derives it from the issuer and the name: renaming an account **changes its id** |
+| issuer / name | the label. This is all the app reads without authorization |
+| type | TOTP (period 30 or 60 s) or HOTP (counter) |
+| algorithm | SHA-1, SHA-256 or SHA-512 |
+| digits | 6 or 8 |
+| requiresTouch | the key will demand a physical touch to compute this code |
 
-Le secret ne sort jamais : la clé calcule, l'app reçoit un code à six ou huit chiffres.
+The secret never leaves the key: the key computes, the app receives a code of six or eight
+digits.
 
-## Le transport
+## The transport
 
-La YubiKey se présente comme un **lecteur de cartes à puce** (`system_profiler
-SPSmartCardsDataType` la liste sous « Yubico YubiKey OTP+FIDO+CCID »). macOS l'expose via
-`TKSmartCardSlotManager` ; YubiKit ouvre un `USBSmartCardConnection` puis sélectionne
-l'applet OATH (`OATHSession.makeSession`). Tout le reste est du TLV par APDU.
+The YubiKey presents itself as a **smart card reader** (`system_profiler
+SPSmartCardsDataType` lists it under "Yubico YubiKey OTP+FIDO+CCID"). macOS exposes it through
+`TKSmartCardSlotManager`; YubiKit opens a `USBSmartCardConnection` and then selects the OATH
+applet (`OATHSession.makeSession`). Everything else is TLV over APDU.
 
-Point d'attention : si `TKSmartCardSlotManager.default` est `nil` — aucune clé branchée, ou
-processus sans l'entitlement carte à puce — YubiKit fait un `assertionFailure` (trap en
-build debug) avant de jeter une erreur qui parle de « modèle de clé non supporté », ce qui
-envoie sur une fausse piste. `USBYubiKeyConnector.connect()` teste donc le slot manager
-**avant** d'appeler YubiKit, et jette `OATHFailure.readerUnavailable`, que le service traite
-comme l'état de repos (aucune bannière d'erreur).
+One thing to watch: if `TKSmartCardSlotManager.default` is `nil` — no key plugged in, or a
+process without the smart card entitlement — YubiKit hits an `assertionFailure` (a trap in
+debug builds) before throwing an error about an unsupported key model, which sends you down
+the wrong path. So `USBYubiKeyConnector.connect()` tests the slot manager **before** calling
+YubiKit, and throws `OATHFailure.readerUnavailable`, which the service treats as the resting
+state (no error banner).
 
-## Les commandes
+## The commands
 
-| Opération | CLA | INS | P1 / P2 | Données |
+| Operation | CLA | INS | P1 / P2 | Data |
 | --- | --- | --- | --- | --- |
-| Lister les identifiants | 0x00 | **0xa1** | 0 / 0 | — |
-| Calculer un code | 0x00 | **0xa2** | 0 / **0x01** | TLV nom (0x71) + challenge (0x74) |
-| Calculer une réponse HMAC | 0x00 | 0xa2 | 0 / 0 | TLV nom + challenge |
-| Ajouter un identifiant | 0x00 | 0x01 | 0 / 0 | TLV du credential |
-| Supprimer | 0x00 | 0x02 | 0 / 0 | TLV nom (0x71) |
-| Définir le mot de passe | 0x00 | 0x03 | 0 / 0 | clé + challenge + réponse |
-| Réinitialiser l'applet | 0x00 | 0x04 | 0xde / 0xad | — |
-| Renommer | 0x00 | 0x05 | 0 / 0 | TLV nom + issuer |
+| List credentials | 0x00 | **0xa1** | 0 / 0 | — |
+| Compute a code | 0x00 | **0xa2** | 0 / **0x01** | TLV name (0x71) + challenge (0x74) |
+| Compute an HMAC response | 0x00 | 0xa2 | 0 / 0 | TLV name + challenge |
+| Add a credential | 0x00 | 0x01 | 0 / 0 | credential TLV |
+| Delete | 0x00 | 0x02 | 0 / 0 | TLV name (0x71) |
+| Set the password | 0x00 | 0x03 | 0 / 0 | key + challenge + response |
+| Reset the applet | 0x00 | 0x04 | 0xde / 0xad | — |
+| Rename | 0x00 | 0x05 | 0 / 0 | TLV name + issuer |
 
-**0xa1 est la commande qui compte** : elle liste les identifiants **sans calculer un seul
-code**. C'est elle qui rend possible le modèle « aucun code sans autorisation » — et la
-raison pour laquelle YubicoNotch n'utilise jamais `calculateCredentialCodes()`, qui
-calculerait tout d'un coup.
+**0xa1 is the command that counts**: it lists the credentials **without computing a single
+code**. It is what makes the "no code without authorization" model possible — and the reason
+YubicoNotch never uses `calculateCredentialCodes()`, which would compute everything at once.
 
-## Le calcul d'un code
+## Computing a code
 
-`0xa2` avec P2 = 1, en deux TLV :
+`0xa2` with P2 = 1, in two TLVs:
 
 ```
-nom (0x71) : l'identifiant du credential
-challenge (0x74) :
-    TOTP → temps_unix / période, en UInt64 big-endian
-    HOTP → vide (la clé incrémente son compteur)
+name (0x71): the credential's identifier
+challenge (0x74):
+    TOTP → unix_time / period, as big-endian UInt64
+    HOTP → empty (the key increments its counter)
 ```
 
-Réponse : un TLV (0x75) dont **le premier octet est le nombre de chiffres**, suivi du code
-tronqué en UInt32 big-endian, que la clé a déjà formaté selon le nombre de chiffres.
+Response: one TLV (0x75) whose **first byte is the number of digits**, followed by the
+truncated code as a big-endian UInt32, which the key has already formatted for that number of
+digits.
 
-La clé **n'a pas d'horloge** : c'est l'app qui passe l'horodatage. Les fenêtres TOTP sont
-donc alignées sur l'epoch, ce qui permet d'afficher un compte à rebours juste sans jamais
-avoir calculé le code (`CodeClock.window(period:now:)`).
+The key **has no clock**: the app is the one that passes the timestamp. TOTP windows are
+therefore aligned on the epoch, which makes it possible to show an accurate countdown without
+ever having computed the code (`CodeClock.window(period:now:)`).
 
-Un credential `requiresTouch` fait attendre la commande jusqu'au contact physique : c'est la
-phase `reading`, que l'interface annonce par « Touche la clé ».
+A `requiresTouch` credential makes the command wait until the physical touch: that is the
+`reading` phase, which the interface announces with "Touch the key".
 
-## Le mot de passe de l'applet
+## The applet password
 
-L'applet OATH peut être protégée. Le mot de passe ne circule jamais tel quel : il est dérivé
-par **PBKDF2** en une clé d'accès, et la commande `0x03` échange un défi/réponse. Tant que
-l'applet est fermée, toute lecture répond `securityConditionNotSatisfied`, que l'app traduit
-en `OATHFailure.passwordRequired`.
+The OATH applet can be protected. The password never travels as such: it is derived by
+**PBKDF2** into an access key, and command `0x03` exchanges a challenge/response. As long as
+the applet is closed, every read answers `securityConditionNotSatisfied`, which the app maps
+to `OATHFailure.passwordRequired`.
 
-YubicoNotch stocke le **mot de passe** (pas la clé dérivée) dans le trousseau de session, et
-le rejoue pour rouvrir l'applet. Le trousseau protégé par biométrie
-(`SecAccessControl` + `kSecUseDataProtectionKeychain`) n'est pas utilisable ici : il exige
-une app signée avec un profil et renvoie `errSecMissingEntitlement` (-34018) sur une
-signature ad hoc. Compromis assumé, et documenté : ce mot de passe seul est inutile sans la
-clé physique.
+YubicoNotch stores the **password** (not the derived key) in the session keychain, and
+replays it to reopen the applet. The biometry-protected keychain
+(`SecAccessControl` + `kSecUseDataProtectionKeychain`) is not usable here: it requires an app
+signed with a profile and returns `errSecMissingEntitlement` (-34018) on an ad hoc signature.
+Assumed trade-off, and documented: that password alone is useless without the physical key.
 
 ## `otpauth://`
 
-L'URI standard des authentificateurs :
+The standard authenticator URI:
 
 ```
-otpauth://totp/Emetteur:compte?secret=BASE32&issuer=Emetteur&algorithm=SHA1&digits=6&period=30
-otpauth://hotp/compte?secret=BASE32&counter=0
+otpauth://totp/Issuer:account?secret=BASE32&issuer=Issuer&algorithm=SHA1&digits=6&period=30
+otpauth://hotp/account?secret=BASE32&counter=0
 ```
 
-Le parsing de YubicoNotch (`NewCredential.parse`) est **écrit à la main, sans
-`URLComponents`** : re-encoder un secret, c'est le casser, et une URI peut arriver d'un QR
-code imparfait.
+YubicoNotch's parsing (`NewCredential.parse`) is **written by hand, without `URLComponents`**:
+re-encoding a secret breaks it, and a URI can arrive from an imperfect QR code.
 
-- dans la *query*, `+` se décode comme un espace (jamais valide en base32) ; dans le *label*
-  (le chemin), `+` reste littéral ;
-- l'émetteur et le compte se séparent sur le **`:` brut, avant tout décodage** : un `%3A`
-  reste donc une donnée, pas un séparateur ;
-- l'ordre de validation est : schéma → hôte (`totp`/`hotp`, sinon `unsupportedType`) →
-  secret → algorithme → chiffres → période/compteur → nom. Un type inconnu gagne donc sur
-  un secret invalide, et le message le dit ;
-- `requiresTouch` vaut toujours `false` au parsing (ça se règle dans le formulaire), et
-  l'algorithme par défaut est SHA-1 ;
-- le garde-fou « au moins 10 octets de secret » n'existe que dans `fromForm` (saisie
-  manuelle), pas dans `parse` : un QR code qui déclare un secret court est accepté tel quel.
+- in the *query*, `+` decodes as a space (never valid in base32); in the *label* (the path),
+  `+` stays literal;
+- the issuer and the account split on the **raw `:` before any decoding**: a `%3A` therefore
+  stays data, not a separator;
+- the validation order is: scheme → host (`totp`/`hotp`, otherwise `unsupportedType`) →
+  secret → algorithm → digits → period/counter → name. An unknown type therefore wins over an
+  invalid secret, and the message says so;
+- `requiresTouch` is always `false` at parsing time (that is set in the form), and the default
+  algorithm is SHA-1;
+- the "at least 10 bytes of secret" guard only exists in `fromForm` (manual entry), not in
+  `parse`: a QR code that declares a short secret is accepted as is.
 
 ## Base32
 
-Décodeur RFC 4648 maison (`Core/Base32.swift`), insensible à la casse, qui ignore espaces,
-retours à la ligne et tirets — les secrets sont souvent recopiés par groupes :
+An in-house RFC 4648 decoder (`Core/Base32.swift`), case-insensitive, which ignores spaces,
+line breaks and dashes — secrets are often copied in groups:
 
-- un padding présent doit **fermer un groupe de 8** : `MZXW6===` passe, `MZXW6=` renvoie
-  `nil` même si les bits résiduels sont nuls ;
-- après extraction des octets, il doit rester 0 à 4 bits résiduels, **et ils doivent être
-  nuls** : `MZXW7` renvoie `nil` ;
-- une entrée vide donne `Data()` vide. Ce sont les appelants qui refusent : `fromForm` exige
-  au moins 10 octets, parce qu'un secret plus court n'est pas un secret.
+- a padding, when present, must **close a group of 8**: `MZXW6===` passes, `MZXW6=` returns
+  `nil` even if the residual bits are zero;
+- after extracting the bytes, 0 to 4 residual bits must remain, **and they must be zero**:
+  `MZXW7` returns `nil`;
+- an empty input gives an empty `Data()`. The callers are the ones that reject: `fromForm`
+  requires at least 10 bytes, because a shorter secret is not a secret.
 
-## Ce que l'app voit, à chaque instant
+## What the app sees, at every instant
 
-| Moment | Ce que l'app a en main |
+| Moment | What the app has in hand |
 | --- | --- |
-| panneau fermé | rien : la clé n'est pas sollicitée |
-| panneau ouvert | les noms des comptes (applet ouverte) — aucun code |
-| confirmation en cours | rien de plus |
-| après le geste | **un** code, celui du compte confirmé, et il disparaît à la fin de sa fenêtre |
-| verrouillé | rien : la session est fermée, la liste est effacée |
+| panel closed | nothing: the key is not polled |
+| panel open | the account names (applet open) — no code |
+| confirmation in progress | nothing more |
+| after the gesture | **one** code, the confirmed account's, and it disappears at the end of its window |
+| locked | nothing: the session is closed, the list is wiped |
 
-Le presse-papiers est vidé après le délai choisi, et seulement si le code copié s'y trouve
-encore — un texte copié entre-temps n'est jamais touché.
+The clipboard is wiped after the chosen delay, and only if the copied code is still there —
+text copied in the meantime is never touched.
