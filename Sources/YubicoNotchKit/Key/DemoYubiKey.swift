@@ -1,4 +1,3 @@
-#if DEBUG
 import CryptoKit
 import Foundation
 import LocalAuthentication
@@ -6,7 +5,9 @@ import LocalAuthentication
 /// Development harness: a fake YubiKey with rotating TOTP codes and a fake Touch ID
 /// prompt, so the whole panel can be exercised (and screenshotted) without hardware.
 ///
-/// Enabled with the `-demo` launch argument; never reachable in a release build.
+/// Enabled with the `-demo` launch argument. It survives the release build on purpose:
+/// it is how someone with no YubiKey — an App Store reviewer, for one — can see the panel
+/// work. It never touches a real key or a real secret.
 
 public struct DemoBiometricGate: BiometricAuthenticating {
     public init() {}
@@ -179,4 +180,3 @@ actor DemoOATHSession: OATHSessionProtocol {
         return String(format: "%0\(digits)d", truncated % modulus)
     }
 }
-#endif

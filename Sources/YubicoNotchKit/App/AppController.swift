@@ -17,22 +17,18 @@ public final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegat
     public init(demo: Bool = false) {
         let settings = Settings()
         self.settings = settings
-        #if DEBUG
-            // `-unlock` opens the panel and starts the real Touch ID request at launch:
-            // the only thing left to provide is a finger, which is how the embedded
-            // biometric prompt gets checked on real hardware.
-            if demo {
-                self.service = YubiKeyService(
-                    connector: DemoYubiKeyConnector(),
-                    gate: DemoBiometricGate(),
-                    settings: settings
-                )
-            } else {
-                self.service = YubiKeyService(settings: settings)
-            }
-        #else
+        // `-demo` swaps in a fake key and a fake sensor. It survives the release build on
+        // purpose: it is how someone with no YubiKey — an App Store reviewer, for one — can
+        // see the panel work.
+        if demo {
+            self.service = YubiKeyService(
+                connector: DemoYubiKeyConnector(),
+                gate: DemoBiometricGate(),
+                settings: settings
+            )
+        } else {
             self.service = YubiKeyService(settings: settings)
-        #endif
+        }
         super.init()
     }
 
