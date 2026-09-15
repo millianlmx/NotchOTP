@@ -206,3 +206,15 @@ ce qu'il fait.
 <p align="center">
   <a href="https://buymeacoffee.com/millianlmx"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-millianlmx-ffdd00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
 </p>
+
+## Licence
+
+**[PolyForm Noncommercial 1.0.0](LICENSE.md)** — usage personnel, familial, associatif,
+éducatif, de recherche ou d'administration publique libre et gratuit. **Toute utilisation
+commerciale demande une licence séparée** : ouvre une issue sur le dépôt. C'est ce qui
+permet à l'app de rester gratuite, sans compte et sans télémétrie, pendant que personne ne
+la revend.
+
+La dépendance [YubiKit](https://github.com/Yubico/yubikit-swift) reste sous **Apache-2.0**
+et garde sa propre licence : si tu redistribues l'app construite (elle est liée statiquement
+dans le binaire), joins-en les termes.
