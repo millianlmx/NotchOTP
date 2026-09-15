@@ -22,6 +22,11 @@
 	<string>1.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<!-- Export compliance. The only cryptography is standard and Apple exempts it: HMAC for
+	     the demo codes, PBKDF2 to open the key's OATH applet, and no network at all. Declaring
+	     it here means App Store Connect stops asking on every submission. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.utilities</string>
 	<key>LSMinimumSystemVersion</key>
