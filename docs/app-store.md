@@ -135,6 +135,13 @@ bundle ID **app.notchotp**, SKU **notchotp**, Full Access, primary language **En
 **Category** — Utilities · **Price** — Free · **Age rating** — 4+ · **App Privacy** —
 Data Not Collected
 
+Where each of those lives matters, because App Store Connect reports a missing category on
+the *version* page while the field sits elsewhere: the category, the age rating questionnaire
+and the content rights declaration are all on **App Information** (General in the sidebar),
+not on the version page. The version page carries what is localizable — description,
+keywords, screenshots. `LSApplicationCategoryType` in `Info.plist` already says Utilities, so
+pick the same thing here.
+
 **Screenshots** — 1280×800 or larger. The two in `docs/` are too small for the store; take
 real ones of the panel open over a desktop, and one of the settings window.
 
