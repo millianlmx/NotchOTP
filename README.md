@@ -1,41 +1,58 @@
 # YubicoNotch
 
-**Tes codes à usage unique, dans l'encoche du Mac — et une empreinte pour chacun.**
+> One-time codes in your Mac's notch — and a fingerprint for each one.
 
-Survole l'encoche : le panneau s'ouvre sur la liste de tes comptes. Clique un compte,
-pose le doigt : le code est copié. Les secrets ne quittent jamais la YubiKey, rien n'est
-stocké, rien ne se synchronise, et **un code affiché ne s'obtient pas deux fois sans un
-nouveau geste**.
+Hover the notch and the panel opens on your accounts. Click one, touch the sensor, and the
+code is on your clipboard. The secrets never leave the YubiKey, nothing is stored, nothing
+syncs, and **a code shown once does not come back without a new gesture**.
 
 <p align="center">
-  <img src="docs/panel-list.png" width="420" alt="La liste : un code confirmé à gauche, les autres encore masqués">
-  <img src="docs/panel-confirmation.png" width="420" alt="La feuille de confirmation : le compte, le code masqué, l'empreinte">
+  <img src="docs/panel-list.png" width="420" alt="The list: one confirmed code, the others still masked">
+  <img src="docs/panel-confirmation.png" width="420" alt="The confirmation sheet: the account, the masked code, the fingerprint">
 </p>
 
-## Pourquoi celle-là
+---
 
-- **Elle vit dans l'encoche.** Pas de fenêtre, pas d'icône dans le Dock, pas de ⌘Tab. Elle
-  est là quand tu la survoles, et invisible autrement — repliée, elle ne dessine rien du
-  tout, ces pixels n'existent pas.
-- **Tes codes ne traînent nulle part.** Une YubiKey calcule les TOTP/HOTP dans son applet
-  OATH ; l'app ne reçoit que le résultat. Aucun secret sur le disque, aucune synchro, aucun
-  compte en ligne.
-- **Un geste, un code.** Le panneau n'ouvre pas une session : il liste tes comptes, et
-  chaque code demande sa propre empreinte. Le prompt biométrique d'Apple est dessiné *dans*
-  le panneau — aucune fenêtre système qui s'ouvre ailleurs.
-- **Ça ne ment pas sur ce que ça lit.** Ouvrir le panneau ne fait que demander les *noms* à
-  la clé ; le code n'est calculé qu'après ton geste, pour ce seul compte, et il disparaît à
-  la fin de sa fenêtre.
+## Table of Contents
 
-## Ce qu'il te faut
+- [Why this one](#why-this-one)
+- [Requirements](#requirements)
+- [Install](#install)
+- [Usage](#usage)
+- [One gesture, one code](#one-gesture-one-code)
+- [Settings](#settings)
+- [Security](#security)
+- [Accessibility](#accessibility)
+- [How it works](#how-it-works)
+- [Troubleshooting](#troubleshooting)
+- [Support](#support)
+- [License](#license)
+
+---
+
+## Why this one
+
+1. **It lives in the notch.** No window, no Dock icon, no ⌘Tab. It is there when you hover
+   it and invisible otherwise — collapsed, it draws nothing at all, because those pixels do
+   not exist.
+2. **Your codes pile up nowhere.** A YubiKey computes TOTP/HOTP inside its OATH applet; the
+   app only receives the result. No secret on disk, no sync, no online account.
+3. **One gesture, one code.** The panel does not open a session: it lists your accounts, and
+   every code asks for its own fingerprint. Apple's biometric prompt is drawn *inside* the
+   panel — no system dialog popping up somewhere else.
+4. **It does not lie about what it reads.** Opening the panel only asks the key for *names*;
+   a code is computed only after your gesture, for that one account, and it disappears with
+   its own validity window.
+
+## Requirements
 
 | | |
 | --- | --- |
-| **Un Mac avec une encoche** | Sans encoche (ou sur écran externe), seule l'icône de barre de menus reste disponible |
-| **macOS 14 ou plus récent** | et Touch ID, ou l'Apple Watch pour confirmer |
-| **Une YubiKey en USB-C** | avec des identifiants OATH déjà enregistrés (`Yubico Authenticator` ou `ykman oath accounts add`) |
+| **A Mac with a notch** | Without one (or on an external display), only the menu bar icon is available |
+| **macOS 14 or later** | and Touch ID, or an Apple Watch, to confirm |
+| **A USB-C YubiKey** | with OATH credentials already stored (`Yubico Authenticator`, or `ykman oath accounts add`) |
 
-## Installation
+## Install
 
 ```bash
 git clone https://github.com/millianlmx/yubico_notch.git
@@ -44,177 +61,172 @@ cd yubico_notch
 open build/YubicoNotch.app
 ```
 
-Puis glisse `YubicoNotch.app` dans **Applications** si tu veux qu'il reste — et coche
-*Ouvrir à la connexion* dans les réglages : il démarrera discrètement dans la barre de
-menus.
+Drag `YubicoNotch.app` to **Applications** to keep it, then enable *Launch at login* in the
+settings — it will start quietly in the menu bar.
 
-Il n'y a pas de `.xcodeproj` : SwiftPM construit, et le script assemble et signe le bundle
-(une seule dépendance, [YubiKit](https://github.com/Yubico/yubikit-swift), épinglée en
-1.3.0). La signature est ad hoc, avec l'entitlement carte à puce — c'est ce qui permet à
-l'app de voir la clé, et c'est aussi pourquoi tu la construis toi-même plutôt que de la
-télécharger.
+There is no `.xcodeproj`: SwiftPM builds, and the script assembles and signs the bundle. One
+single dependency, [YubiKit](https://github.com/Yubico/yubikit-swift), pinned at 1.3.0. The
+signature is ad hoc, carrying the smart-card entitlement — that is what lets the app see the
+key, and it is also why you build it yourself instead of downloading it.
 
-Mode démo, pour voir le panneau sans matériel (clé factice, codes TOTP réellement calculés,
-Touch ID simulé) :
+Demo mode, to see the panel without hardware (fake key, real TOTP maths, simulated Touch
+ID):
 
 ```bash
 ./Scripts/build-app.sh --debug
 open build/YubicoNotch.app --args -demo
 ```
 
-## Utilisation
+## Usage
 
-| État | Ce que fait l'app |
+| State | What the app does |
 | --- | --- |
-| Aucune clé | Le panneau invite à brancher la clé, et se met à jour dès qu'elle arrive |
-| Clé détectée | Le panneau liste les comptes de l'applet OATH ; aucun code n'est affiché |
-| Aucun compte | Écran d'accueil qui propose d'en enregistrer un |
-| Compte choisi | Feuille de confirmation : l'empreinte révèle le code **et** le copie |
-| Mot de passe OATH | Champ de saisie dans le panneau, avec option « mémoriser dans le trousseau » |
+| No key | The panel invites you to plug it in, and catches up the moment you do |
+| Key detected | The panel lists the accounts in the OATH applet; no code is shown |
+| No accounts | A welcome screen offering to add one |
+| Account picked | The confirmation sheet: the fingerprint reveals the code **and** copies it |
+| OATH password | An input field in the panel, with a "remember in the keychain" option |
 
-- **Chercher** : `⌘F` (ou la loupe) filtre la liste par émetteur ou par compte.
-- **Naviguer au clavier** : `↑` `↓` pour parcourir, `⏎` ou `⌘C` pour confirmer la ligne
-  sélectionnée, `Échap` pour refermer la confirmation, puis la recherche, puis le panneau.
-  Les raccourcis s'activent quand le panneau a le clavier : le survol ne le prend jamais,
-  un clic dedans si.
-- **Renommer ou supprimer** : clic droit sur une ligne. La suppression demande confirmation
-  dans le panneau — rien n'est effacé sans un second clic.
-- **Ajouter un compte** : bouton `+` dans l'en-tête. Saisis l'émetteur, le compte et la clé
-  base32, colle un lien `otpauth://`, ou lis un QR code affiché à l'écran avec *Scanner
-  l'écran*. TOTP/HOTP, 6 ou 8 chiffres, période 30/60 s et contact physique obligatoire sont
-  réglables.
-- **Scanner l'écran** : le panneau se replie, tu traces un rectangle sur n'importe quel
-  écran (Échap annule), et le QR code `otpauth://` qu'il contient remplit le formulaire. La
-  première fois, macOS demande l'autorisation *Enregistrement de l'écran*.
-- **Presse-papiers** : vidé après le délai choisi dans les réglages, et seulement si tu n'as
-  pas copié autre chose entre-temps.
-- **Verrouiller** : efface les codes révélés et la liste, et referme la session OATH —
-  l'applet de la clé se reverrouille. Le panneau reste verrouillé tant qu'il est ouvert ;
-  quitter l'encoche et y revenir relit la liste. Le verrouillage est aussi immédiat si tu
-  verrouilles ta session, si l'écran s'éteint ou si la clé est débranchée.
+- **Search** — `⌘F` (or the magnifier) filters the list by issuer or account.
+- **Keyboard** — `↑` `↓` to move, `⏎` or `⌘C` to confirm the selected row, `Échap` to close
+  the confirmation, then the search, then the panel. The shortcuts need the panel to hold
+  the keyboard: hovering never takes it, clicking inside does.
+- **Rename or delete** — right-click a row. Deletion asks for confirmation inside the panel:
+  nothing is erased without a second click.
+- **Add an account** — the `+` button in the header. Type the issuer, the account and the
+  base32 secret, paste an `otpauth://` link, or read a QR code shown on screen with *Scan
+  the screen*. TOTP/HOTP, 6 or 8 digits, a 30/60 s period and physical-touch requirements are
+  all configurable.
+- **Scan the screen** — the panel collapses, you drag a rectangle over any display (Escape
+  cancels), and the `otpauth://` QR code it contains fills the form. The first time, macOS
+  asks for *Screen Recording* permission.
+- **Clipboard** — wiped after the delay you chose in the settings, and only if you have not
+  copied something else in the meantime.
+- **Lock** — erases the revealed codes and the list, and closes the OATH session, relocking
+  the applet on the key. The panel stays locked while it is open; leaving the notch and
+  coming back lists your accounts again. Locking is also immediate when you lock your
+  session, when the display sleeps, or when the key is unplugged.
 
-## Un geste, un code
+## One gesture, one code
 
-C'est la mécanique d'Apple Pay, transposée : le panneau montre ce qui est sur la clé comme
-Wallet montre les cartes, une feuille annonce ce qui est sur le point d'être copié, et rien
-ne sort sans un geste délibéré.
+This is Apple Pay's mechanic, transposed: the panel shows what is on the key the way Wallet
+shows the cards, a sheet states what is about to be copied, and nothing leaves without a
+deliberate gesture.
 
-**Touch ID** (défaut) — une empreinte, ou un double-clic sur le bouton latéral d'une Apple
-Watch appairée à proximité, **pour chaque code**. Le contrôle biométrique d'Apple est
-intégré au panneau : macOS dessine son prompt dedans, jamais dans une alerte système.
+**Touch ID** (default) — a fingerprint, or a double-click on the side button of a paired
+Apple Watch, **for every single code**. Apple's biometric control is embedded in the panel:
+macOS draws its prompt in there, never in a system alert.
 
-Une finesse qui a coûté cher à trouver : la réutilisation vit dans le `LAContext`. Un
-contexte qui a déjà reconnu un doigt répond à l'évaluation suivante en **une dizaine de
-millisecondes, sans nouveau toucher** — autrement dit, une seule empreinte ouvrait tous les
-codes suivants. Chaque confirmation invalide donc le contexte précédent et en arme un neuf,
-avant même que la feuille existe. Mesuré après correctif : 1,40 s, 1,66 s, 1,32 s par code,
-c'est-à-dire le capteur qui attend vraiment un doigt à chaque fois.
+One subtlety that cost a lot to find: reuse lives in the `LAContext`. A context that has
+already matched a finger answers the next evaluation in **about ten milliseconds, with no
+new touch** — in other words, one fingerprint opened every code after it. Every confirmation
+now invalidates the previous context and arms a fresh one, before the sheet even exists.
+Measured after the fix: 1.40 s, 1.66 s, 1.32 s per code — the sensor genuinely waiting for a
+finger each time.
 
-**Appui maintenu** — l'autre geste, sans capteur : tu maintiens la cible appuyée environ une
-seconde, l'anneau se remplit, le code arrive. Pour les Macs sans Touch ID, et pour qui ne
-veut jamais voir de dialogue biométrique.
+**Press and hold** — the other gesture, with no sensor involved: hold the target for about a
+second, the ring fills, the code arrives. For Macs without Touch ID, and for anyone who
+would rather never see a biometric prompt.
 
-Si une confirmation passait sans que tu poses le doigt, le journal le dirait :
+If a confirmation ever went through without you touching the sensor, the log would say so:
 
 ```bash
 log show --last 2m --predicate 'subsystem == "app.yubiconotch"' --style compact \
   | grep -E 'evaluatePolicy|fresh biometric'
 ```
 
-## Réglages
+## Settings
 
-L'icône ⚙ du panneau, ou le menu de la barre de menus (*Réglages…*). Trois onglets :
+The ⚙ icon in the panel, or the menu bar menu (*Settings…*). Three tabs:
 
-| Onglet | Ce qu'on y règle |
+| Tab | What it holds |
 | --- | --- |
-| **Général** | Ouvrir à la connexion, mode de confirmation, délai d'effacement du presse-papiers, masquage des codes |
-| **YubiKey** | Mémorisation du mot de passe OATH, et l'état de l'accès à la carte à puce |
-| **À propos** | Nom, version et build, identifiant du bundle, copyright |
+| **General** | Launch at login, confirmation method, clipboard wipe delay, code masking delay |
+| **YubiKey** | OATH password memorisation, and the smart-card access diagnostic |
+| **About** | Name, version and build, bundle identifier, copyright |
 
-**Ouvrir à la connexion** passe par `SMAppService` : la case reflète l'état réel de
-l'élément de connexion du système, pas une préférence à nous. Quand macOS attend une
-autorisation, la fenêtre propose d'ouvrir le bon panneau.
+**Launch at login** goes through `SMAppService`: the checkbox reflects the real state of the
+system login item, not a preference of ours. When macOS is waiting for an approval, the
+window offers to open the right pane.
 
-## Sécurité
+## Security
 
-- **Aucun code n'est calculé sans un geste.** Lister la clé ne lit que les noms des comptes ;
-  le code d'un compte n'est calculé que lorsque l'empreinte — ou le double-clic sur l'Apple
-  Watch, ou l'appui maintenu — l'a autorisé. Un test tient la propriété : la clé ne reçoit
-  aucune demande de code avant le geste.
-- La liste des comptes — émetteur et nom, jamais un code — s'affiche dès que le panneau
-  s'ouvre. C'est le compromis assumé du modèle Wallet : les cartes se voient, le numéro non.
-- Le mot de passe OATH optionnel est stocké dans le **trousseau de session** et ne sert qu'à
-  ouvrir l'applet. Le trousseau protégé par biométrie n'est pas utilisable sur une app signée
-  ad hoc (`errSecMissingEntitlement`, -34018). Compromis assumé : ce mot de passe seul est
-  inutile sans la clé physique.
-- Verrouiller efface les codes révélés et la liste, vide le presse-papiers si le code copié y
-  est encore, et referme la connexion pour reverrouiller l'applet.
+- **No code is computed without a gesture.** Listing the key only reads account names; a
+  code is computed only once the fingerprint — or the Apple Watch double-click, or the press
+  and hold — has authorised it. A test holds that property: the key receives no code request
+  before the gesture.
+- The account list — issuer and name, never a code — appears as soon as the panel opens.
+  That is Wallet's compromise, assumed: the cards are visible, the number is not.
+- The optional OATH password is stored in the **session keychain** and only ever opens the
+  applet. The biometry-protected keychain is not usable from an ad-hoc signed app
+  (`errSecMissingEntitlement`, -34018). Assumed trade-off: that password alone is useless
+  without the physical key.
+- Locking erases the revealed codes and the list, wipes the clipboard if the copied code is
+  still there, and closes the connection to relock the applet.
 
-## Accessibilité
+## Accessibility
 
-Les lignes sont annoncées à VoiceOver (« GitHub · prenom@exemple.com », valeur « 427391,
-encore 24 secondes sur 30 » ou « Code masqué. Confirmation requise »), les boutons portent
-leurs libellés, et les animations respectent « Réduire les animations ».
+Rows are announced to VoiceOver ("GitHub · name@example.com", value "427391, 24 seconds left
+of 30" or "Code masked. Confirmation required"), buttons carry their labels, and animations
+respect *Reduce Motion*.
 
-## Comment c'est fait
+## How it works
 
-Deux cibles SwiftPM : `YubicoNotchKit` (toute la logique et les vues) et un exécutable de
-vingt lignes. Le détail est dans ** [`docs/architecture.md`](docs/architecture.md)** — les
-coutures qui rendent le service testable sans matériel, la machine à états, le fil
-d'exécution, la fenêtre et le pointeur, la biométrie embarquée, l'entitlement carte à puce,
-et les deux pièges des tests d'interaction AppKit.
+Two SwiftPM targets: `YubicoNotchKit` (all the logic and the views) and a twenty-line
+executable. The details are in **[`docs/architecture.md`](docs/architecture.md)** — the
+protocol seams that make the service testable without hardware, the state machine, the
+execution model, the panel and the pointer, the embedded biometrics, the smart-card
+entitlement, and the two AppKit traps the interaction tests encode.
 
-Ce que l'app envoie réellement à la clé — les APDU de l'applet OATH, le calcul TOTP/HOTP, le
-mot de passe, le parsing `otpauth://` et Base32 — est dans
+What the app actually sends to the key — the OATH applet APDUs, the TOTP/HOTP computation,
+the applet password, the `otpauth://` and Base32 rules — is in
 **[`docs/protocols.md`](docs/protocols.md)**.
 
-Tests :
+Tests:
 
 ```bash
 swift test
 ```
 
-## Dépannage
+## Troubleshooting
 
-**« La clé n'est pas détectée »** — commence par Réglages → *YubiKey* → **Carte à puce**. Si
-elle est *Non accessible*, le processus ne voit aucun lecteur : soit aucune clé n'est
-branchée, soit la copie lancée n'a pas l'entitlement carte à puce — c'est le cas de tout
-binaire non signé, `swift run` compris. L'app produite par `Scripts/build-app.sh` l'a.
+**"The key is not detected"** — start with Settings → *YubiKey* → **Smart card**. If it reads
+*Not accessible*, the process sees no reader at all: either no key is plugged in, or the copy
+you launched does not carry the smart-card entitlement — which is the case for every unsigned
+binary, `swift run` included. The app produced by `Scripts/build-app.sh` carries it.
 
-**« Le Touch ID ne fait rien »** — la vue biométrique doit être dans une fenêtre et le
-panneau capable de prendre le focus clavier pendant le prompt. C'est le cas dans l'app
-construite ; en revanche `swift test` ne peut pas parler à la clé (binaire de test non
-signé), d'où le drapeau `-confirm` qui exerce le vrai parcours :
+**"Touch ID does nothing"** — the biometric view has to be in a window, and the panel has to
+be able to take keyboard focus while the prompt is up. That holds in the built app; on the
+other hand `swift test` cannot talk to the key at all (unsigned test binary), hence the
+`-confirm` flag, which exercises the real path:
 
 ```bash
 open build/YubicoNotch.app --args -confirm
 ```
 
-**Voir ce qui se passe** — tout est journalisé dans le log unifié :
+**See what is going on** — everything is logged to the unified log:
 
 ```bash
 log show --last 2m --predicate 'subsystem == "app.yubiconotch"' --style compact
 ```
 
-## Soutenir
+## Support
 
-Cette app est écrite pour être utile, pas pour vendre quoi que ce soit : pas de compte, pas
-de télémétrie, pas de version « pro ». Si elle te fait gagner du temps chaque jour, tu peux
-m'offrir un café — ça finance les prochaines nuits passées à comprendre pourquoi macOS fait
-ce qu'il fait.
+This app is written to be useful, not to sell anything: no account, no telemetry, no "pro"
+tier. If it saves you time every day, you can buy me a coffee — it funds the next nights
+spent figuring out why macOS does what it does.
 
 <p align="center">
   <a href="https://buymeacoffee.com/millianlmx"><img src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-millianlmx-ffdd00?logo=buymeacoffee&logoColor=black" alt="Buy Me a Coffee"></a>
 </p>
 
-## Licence
+## License
 
-**[PolyForm Noncommercial 1.0.0](LICENSE.md)** — usage personnel, familial, associatif,
-éducatif, de recherche ou d'administration publique libre et gratuit. **Toute utilisation
-commerciale demande une licence séparée** : ouvre une issue sur le dépôt. C'est ce qui
-permet à l'app de rester gratuite, sans compte et sans télémétrie, pendant que personne ne
-la revend.
+**[PolyForm Noncommercial 1.0.0](LICENSE.md)** — personal, family, charitable, educational,
+research and public-administration use is free. **Any commercial use requires a separate
+licence**: open an issue on this repository. That is what keeps the app free, account-less
+and telemetry-free while nobody resells it.
 
-La dépendance [YubiKit](https://github.com/Yubico/yubikit-swift) reste sous **Apache-2.0**
-et garde sa propre licence : si tu redistribues l'app construite (elle est liée statiquement
-dans le binaire), joins-en les termes.
+The [YubiKit](https://github.com/Yubico/yubikit-swift) dependency stays under **Apache-2.0**
+and keeps its own terms: if you redistribute the built app (it is linked statically into the
+binary), ship its licence alongside this one.
