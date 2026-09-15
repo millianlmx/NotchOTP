@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- The Mac App Store requires the sandbox. Verified on macOS 26: with these two
+	     entitlements the app still lists a real YubiKey's credentials over PC/SC. The
+	     direct-download build (Resources/YubicoNotch.entitlements) stays unsandboxed on
+	     purpose: same code, one less restriction for the people who build it themselves. -->
+	<key>com.apple.security.app-sandbox</key>
+	<true/>
+	<key>com.apple.security.smartcard</key>
+	<true/>
+</dict>
+</plist>

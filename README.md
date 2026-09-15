@@ -73,9 +73,12 @@ Demo mode, to see the panel without hardware (fake key, real TOTP maths, simulat
 ID):
 
 ```bash
-./Scripts/build-app.sh --debug
+./Scripts/build-app.sh
 open build/YubicoNotch.app --args -demo
 ```
+
+The demo is compiled into the release build on purpose: it is how you try the app before
+owning a key — four accounts, codes that really rotate, a sensor that says yes.
 
 ## Usage
 
@@ -181,6 +184,10 @@ entitlement, and the two AppKit traps the interaction tests encode.
 What the app actually sends to the key — the OATH applet APDUs, the TOTP/HOTP computation,
 the applet password, the `otpauth://` and Base32 rules — is in
 **[`docs/protocols.md`](docs/protocols.md)**.
+
+Shipping it on the Mac App Store is prepared, though the app is not there yet: sandbox
+entitlements, an XcodeGen spec and an archive script, plus the two review hurdles worth
+knowing about — **[`docs/app-store.md`](docs/app-store.md)**.
 
 Tests:
 

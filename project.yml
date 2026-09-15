@@ -1,0 +1,73 @@
+# XcodeGen spec — the source of truth for the Xcode project.
+#
+#   xcodegen generate      # writes YubicoNotch.xcodeproj (not committed)
+#
+# SwiftPM stays the source of truth for the code: this file only exists because the Mac App
+# Store pipeline is built around an Xcode target — `xcodebuild archive` then `-exportArchive`
+# with a Mac App Store provisioning profile. Day-to-day building needs none of this;
+# `Scripts/build-app.sh` remains faster and does not need Xcode.
+#
+# See docs/app-store.md.
+
+name: YubicoNotch
+
+options:
+  bundleIdPrefix: app
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  generateEmptyDirectories: false
+
+packages:
+  yubikit-swift:
+    url: https://github.com/Yubico/yubikit-swift
+    from: 1.3.0
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    MARKETING_VERSION: "1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    ENABLE_HARDENED_RUNTIME: YES
+    DEAD_CODE_STRIPPING: YES
+    GENERATE_INFOPLIST_FILE: NO
+
+targets:
+  # A static library, like SwiftPM produces: nothing to embed, nothing extra to sign, and
+  # no nested bundle for the App Store profile to worry about.
+  YubicoNotchKit:
+    type: library.static
+    platform: macOS
+    sources:
+      - path: Sources/YubicoNotchKit
+    dependencies:
+      - package: yubikit-swift
+        product: YubiKit
+    settings:
+      base:
+        PRODUCT_NAME: YubicoNotchKit
+        SKIP_INSTALL: YES
+
+  YubicoNotch:
+    type: application
+    platform: macOS
+    sources:
+      - path: Sources/YubicoNotch
+      # Only the icon: Info.plist goes through INFOPLIST_FILE and the entitlements through
+      # CODE_SIGN_ENTITLEMENTS, neither of which belongs in Resources.
+      - path: Resources/AppIcon.icns
+        buildPhase: resources
+    dependencies:
+      - target: YubicoNotchKit
+      # Linked again on purpose: a static library does not carry its own dependencies.
+      - package: yubikit-swift
+        product: YubiKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: app.yubiconotch
+        INFOPLIST_FILE: Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/YubicoNotch-AppStore.entitlements
+        CODE_SIGN_STYLE: Automatic
+        # Menu bar only, and an accessory app: no Dock icon to declare.
+        LSApplicationCategoryType: public.app-category.utilities
