@@ -37,21 +37,35 @@ xcodebuild -project NotchOTP.xcodeproj -scheme NotchOTP \
   -allowProvisioningUpdates \
   archive
 
+EXPORT_OPTIONS=Scripts/ExportOptions-AppStore.plist
+if [[ "${1:-}" == "--upload" && -z "${ASC_KEY_ID:-}" ]]; then
+  # No API key at hand: hand the job to Xcode, which uploads with the account it is signed
+  # into. This is the path to prefer unless you are automating the whole thing — there is no
+  # credential to keep around, and it is what Transporter.app does from a GUI.
+  export_dir="$(mktemp -d)"
+  EXPORT_OPTIONS="$export_dir/ExportOptions.plist"
+  sed 's|<string>export</string>|<string>upload</string>|' \
+    Scripts/ExportOptions-AppStore.plist > "$EXPORT_OPTIONS"
+fi
+
 rm -rf "$EXPORT"
 xcodebuild -exportArchive \
   -archivePath "$ARCHIVE" \
-  -exportOptionsPlist Scripts/ExportOptions-AppStore.plist \
+  -exportOptionsPlist "$EXPORT_OPTIONS" \
   -exportPath "$EXPORT" \
   -allowProvisioningUpdates
 
 echo
-echo "Exported:"
-ls -1 "$EXPORT"
+if [[ "${1:-}" == "--upload" && -z "${ASC_KEY_ID:-}" ]]; then
+  echo "Uploaded to App Store Connect: the build shows up on the version page once Apple has"
+  echo "finished processing it (a few minutes)."
+else
+  echo "Exported:"
+  ls -1 "$EXPORT"
+fi
 
-if [[ "${1:-}" == "--upload" ]]; then
+if [[ "${1:-}" == "--upload" && -n "${ASC_KEY_ID:-}" ]]; then
   # An App Store Connect API key (App Store Connect → Users and Access → Integrations).
-  # Transporter.app does the same thing from a GUI, if that is more comfortable.
-  : "${ASC_KEY_ID:?Set ASC_KEY_ID (App Store Connect API key id)}"
   : "${ASC_ISSUER_ID:?Set ASC_ISSUER_ID (App Store Connect API issuer id)}"
 
   xcrun altool --upload-app --type macos \

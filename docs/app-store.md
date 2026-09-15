@@ -42,17 +42,33 @@ and no nested framework to sign (the kit is a static library, like SwiftPM produ
    TEAM_ID=ABCDE12345 Scripts/archive-app.sh
    ```
 
-4. **Upload**: Xcode's Organizer, Transporter.app, or the same script with an App Store
-   Connect API key:
+4. **Upload**: Xcode's Organizer, Transporter.app, or the same script — which uploads through
+   Xcode's own account session, no API key to handle:
 
    ```bash
-   TEAM_ID=ABCDE12345 ASC_KEY_ID=… ASC_ISSUER_ID=… Scripts/archive-app.sh --upload
+   TEAM_ID=ABCDE12345 Scripts/archive-app.sh --upload
    ```
 
+   With an App Store Connect API key in the environment (`ASC_KEY_ID` and `ASC_ISSUER_ID`,
+   from App Store Connect → Users and Access → Integrations) the script uses `altool`
+   instead, which is the one to pick when automating.
+
 5. **The listing**: description, the 1024×1024 icon (the bundle carries an `.icns`; the
-   marketing icon is uploaded in App Store Connect), screenshots (the two in `docs/` show
-   the panel; App Store Connect wants 1280×800 or larger), privacy — "Data not collected",
-   which is the truth here.
+   marketing icon is uploaded in App Store Connect), screenshots, and privacy — "Data not
+   collected", which is the truth here.
+
+   For the screenshots, capture the panel window **alone** and compose it, rather than
+   photographing the desktop:
+
+   ```bash
+   # the window number comes from CGWindowListCopyWindowInfo, filtering on the owner name
+   screencapture -x -o -l <window number> panel.png      # alpha, no shadow, no desktop
+   ```
+
+   Then draw it hung from the top edge of a 2560×1600 canvas — one of the four sizes App
+   Store Connect accepts (1280×800, 1440×900, 2560×1600, 2880×1800, all 16:10). Two things
+   to know: a screenshot of the whole screen carries whatever the author had open, and the
+   panel collapses on any click outside it, so take a burst of captures rather than one.
 
 ## Two things that decide whether it passes
 
