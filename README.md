@@ -237,3 +237,6 @@ and telemetry-free while nobody resells it.
 The [YubiKit](https://github.com/Yubico/yubikit-swift) dependency stays under **Apache-2.0**
 and keeps its own terms: if you redistribute the built app (it is linked statically into the
 binary), ship its licence alongside this one.
+
+NotchOTP collects nothing and talks to nothing — the details are in
+[`docs/privacy.md`](docs/privacy.md).
