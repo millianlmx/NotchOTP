@@ -1,0 +1,593 @@
+/* NotchOTP — English localization.
+ *
+ * Every key is a French literal copied verbatim from the sources, in the exact form the
+ * compiler emits it (`%@` where a value is inserted, `%lld` where an integer is); the
+ * localizer looks them up by exact match, so a key is never retyped or reformulated.
+ * Comments say where each string is shown. The last section holds the keys whose
+ * English is the French itself, listed so the table covers every key the app looks up.
+ *
+ * Absent on purpose: literals that are identifiers, log messages or demo fixture data
+ * rather than copy. The plural forms are at the end of the file, next to a note saying
+ * where the branch is written.
+ */
+
+/* --------------------------------------------------------------------------
+   AppController.swift — menu bar status item and menu.
+   -------------------------------------------------------------------------- */
+
+/* Menu item and panel tooltip: drops the codes, the listing and the OATH
+   session. */
+"Verrouiller" = "Lock";
+
+/* Menu item: expands the notch panel. */
+"Ouvrir le panneau" = "Open the panel";
+
+/* Menu item: opens the panel on the new-account form. */
+"Ajouter un compte…" = "Add an account…";
+
+/* Menu item: opens the settings window. */
+"Réglages…" = "Settings…";
+
+/* Menu item: opens the settings window on the About pane. */
+"À propos de NotchOTP" = "About NotchOTP";
+
+/* Menu item: terminates the app. */
+"Quitter NotchOTP" = "Quit NotchOTP";
+
+/* Menu item title: state shown while the app waits for a key. */
+"YubiKey non connectée" = "No YubiKey connected";
+
+/* Menu item title: key attached, OATH session not open. %@ is the firmware
+   version. */
+"YubiKey %@ · verrouillée" = "YubiKey %@ · locked";
+
+/* --------------------------------------------------------------------------
+   BiometricGate.swift — Touch ID / Apple Watch confirmation.
+   -------------------------------------------------------------------------- */
+
+/* Cancel button of the system biometric prompt. */
+"Annuler" = "Cancel";
+
+/* Confirmation asked for when no biometric context is armed. */
+"Aucune confirmation en cours." = "No confirmation in progress.";
+
+/* Touch ID locked out after repeated failures. */
+"Touch ID est verrouillé après trop de tentatives." = "Touch ID is locked after too many attempts.";
+
+/* The biometric context was invalidated. */
+"Session biométrique invalide, relance l'app." = "Invalid biometric session, restart the app.";
+
+/* Apple Watch companion requested but not reachable. */
+"Aucun appareil à proximité pour confirmer." = "No device nearby to confirm.";
+
+/* The biometric evaluation came back negative. */
+"Confirmation refusée." = "Confirmation refused.";
+
+/* No biometry and no companion device available. */
+"Aucun moyen de confirmer sur ce Mac." = "No way to confirm on this Mac.";
+
+/* Touch ID exists but no fingerprint is enrolled. */
+"Aucune empreinte enregistrée sur ce Mac." = "No fingerprint enrolled on this Mac.";
+
+/* Suggests the press-and-hold confirmation method instead. */
+"Touch ID indisponible — utilise l'appui maintenu dans les réglages." = "Touch ID unavailable — use press and hold in the settings.";
+
+/* --------------------------------------------------------------------------
+   LaunchAtLogin.swift — login item state and failures.
+   -------------------------------------------------------------------------- */
+
+/* Login item registered. */
+"NotchOTP s'ouvre à l'ouverture de session." = "NotchOTP opens at login.";
+
+/* Login item not registered. */
+"NotchOTP ne s'ouvre que lorsque tu la lances." = "NotchOTP only opens when you launch it.";
+
+/* Login item held by macOS until the user approves it. */
+"Enregistrée : macOS attend ton autorisation dans Réglages Système → Général → Ouverture." = "Registered: macOS is waiting for your approval in System Settings → General → Login Items.";
+
+/* The login item cannot be found (app run outside its bundle). */
+"Élément de connexion introuvable : lance l'app depuis son bundle." = "Login item not found: launch the app from its bundle.";
+
+/* Unrecognised SMAppService status. */
+"État de l'élément de connexion inconnu." = "Login item state unknown.";
+
+/* Verb dropped into the failure sentence below. */
+"activer" = "enable";
+
+/* Verb dropped into the failure sentence below. */
+"désactiver" = "disable";
+
+/* Login item failure. First %@ is enable/disable, second is the system's
+   reason. */
+"Impossible d'%@ l'ouverture à la connexion : %@" = "Unable to %@ launch at login: %@";
+
+/* --------------------------------------------------------------------------
+   Settings.swift — preference labels and details.
+   -------------------------------------------------------------------------- */
+
+/* Clipboard wipe delay: never. */
+"Jamais" = "Never";
+
+/* Clipboard wipe delay. */
+"15 secondes" = "15 seconds";
+
+/* Clipboard wipe delay. */
+"30 secondes" = "30 seconds";
+
+/* Clipboard wipe delay (default). */
+"45 secondes" = "45 seconds";
+
+/* Clipboard wipe delay. */
+"1 minute" = "1 minute";
+
+/* Clipboard wipe delay. */
+"2 minutes" = "2 minutes";
+
+/* Code masking delay (default). */
+"5 minutes" = "5 minutes";
+
+/* Code masking delay. */
+"15 minutes" = "15 minutes";
+
+/* Code masking delay. */
+"30 minutes" = "30 minutes";
+
+/* Confirmation method: hold the target instead of using Touch ID. */
+"Appui maintenu" = "Press and hold";
+
+/* Detail of the Touch ID confirmation method. */
+"Empreinte dans le panneau, ou double-clic sur le bouton latéral de ton Apple Watch — pour chaque code." = "Fingerprint in the panel, or a double-click on the side button of your Apple Watch — for every code.";
+
+/* Detail of the press-and-hold confirmation method. */
+"Maintenir la cible appuyée : pour les Macs sans capteur." = "Hold the target down: for Macs without a sensor.";
+
+/* --------------------------------------------------------------------------
+   OATHKeySession.swift — mapping YubiKit errors onto the UI's failures.
+   -------------------------------------------------------------------------- */
+
+/* Rename requested on a key that does not support it. */
+"Cette YubiKey ne sait pas renommer un compte." = "This YubiKey cannot rename an account.";
+
+/* The applet is missing from the key. */
+"Cette YubiKey n'expose pas l'applet OATH." = "This YubiKey does not expose the OATH applet.";
+
+/* Unexpected OATH status word. %@ is the status description. */
+"YubiKey : réponse %@." = "YubiKey: response %@.";
+
+/* The key rejected the requested OATH feature. */
+"Cette YubiKey ne gère pas cette fonction OATH." = "This YubiKey does not support this OATH feature.";
+
+/* The smart-card connection was lost. */
+"YubiKey débranchée." = "YubiKey unplugged.";
+
+/* No smart-card reader to talk to. */
+"Aucune YubiKey détectée." = "No YubiKey detected.";
+
+/* The connection attempt was cancelled. */
+"Connexion annulée." = "Connection cancelled.";
+
+/* Generic smart-card communication failure. */
+"Échec de communication avec la YubiKey." = "Failed to communicate with the YubiKey.";
+
+/* --------------------------------------------------------------------------
+   YubiKeyService.swift — the code handed over, and the write results.
+   -------------------------------------------------------------------------- */
+
+/* Fallback name for the key in the confirmation reason below. */
+"ta YubiKey" = "your YubiKey";
+
+/* Reason shown by the system biometric prompt. %@ is the account label. */
+"Copier le code de « %@ »" = "Copy the code for “%@”";
+
+/* Success banner after a credential is written. %@ is the account label. */
+"« %@ » ajouté sur la YubiKey." = "“%@” added to your YubiKey.";
+
+/* Success banner after a credential is removed. */
+"Compte supprimé." = "Account deleted.";
+
+/* Success banner after a credential is renamed. */
+"Compte renommé." = "Account renamed.";
+
+/* --------------------------------------------------------------------------
+   NewCredential.swift — why a link or the form could not become a credential.
+   -------------------------------------------------------------------------- */
+
+/* Pasted text is not an otpauth:// URI. */
+"Lien otpauth:// attendu." = "An otpauth:// link was expected.";
+
+/* The link carries no account name. */
+"Nom du compte manquant." = "Account name is missing.";
+
+/* The link carries no secret parameter. */
+"Clé secrète manquante." = "Secret key is missing.";
+
+/* Secret is not valid base32, or shorter than the applet accepts. */
+"Clé secrète invalide (base32, 10 octets minimum)." = "Invalid secret key (base32, 10 bytes minimum).";
+
+/* Something else than TOTP or HOTP in the link. */
+"Type non supporté (TOTP ou HOTP)." = "Unsupported type (TOTP or HOTP).";
+
+/* An otpauth://hotp/ link without a counter. */
+"Compteur HOTP manquant." = "HOTP counter is missing.";
+
+/* Unparsable digits, period, counter or algorithm. */
+"Valeur invalide dans le lien." = "Invalid value in the link.";
+
+/* --------------------------------------------------------------------------
+   OATHModels.swift — failures surfaced in the notch panel.
+   -------------------------------------------------------------------------- */
+
+/* No usable key (busy, no applet, communication error). */
+"YubiKey indisponible." = "YubiKey unavailable.";
+
+/* Another process holds the smart-card session. */
+"YubiKey occupée par une autre application." = "YubiKey busy with another application.";
+
+/* The applet is password protected and still locked. */
+"Mot de passe OATH requis." = "OATH password required.";
+
+/* The applet rejected the password. */
+"Mot de passe OATH incorrect." = "Incorrect OATH password.";
+
+/* The credential requires a physical touch. */
+"Touche ta YubiKey." = "Touch your YubiKey.";
+
+/* The credential is gone from the key. */
+"Ce compte n'existe plus sur la YubiKey." = "This account no longer exists on the YubiKey.";
+
+/* Generic device failure. */
+"Erreur de communication avec la YubiKey." = "Communication error with the YubiKey.";
+
+/* --------------------------------------------------------------------------
+   AccountListViews.swift — the credential list, its rows and its editors.
+   -------------------------------------------------------------------------- */
+
+/* Row context menu: asks for the confirmation gesture. */
+"Afficher le code…" = "Show the code…";
+
+/* Row context menu once the code is revealed; also the ⌘C shortcut button. */
+"Copier le code" = "Copy the code";
+
+/* Row context menu. */
+"Renommer…" = "Rename…";
+
+/* Row context menu. */
+"Supprimer…" = "Delete…";
+
+/* VoiceOver hint on a masked row. */
+"Afficher le code" = "Show the code";
+
+/* VoiceOver label of the masked code. */
+"Code masqué" = "Code masked";
+
+/* Badge on a row whose credential requires a physical touch. */
+"contact" = "touch";
+
+/* VoiceOver value: masked code on a credential that requires a touch. */
+"Code masqué. Confirmation requise, la clé demandera un contact." = "Code masked. Confirmation required, the key will ask for a touch.";
+
+/* VoiceOver value: masked code. */
+"Code masqué. Confirmation requise." = "Code masked. Confirmation required.";
+
+/* VoiceOver value of a revealed code: code, seconds left, period. */
+"%@, encore %lld secondes sur %lld" = "%@, %lld seconds left of %lld";
+
+/* Title of the in-panel delete confirmation. %@ is the account label. */
+"Supprimer « %@ » ?" = "Delete “%@”?";
+
+/* Body of the in-panel delete confirmation. */
+"Le compte sera effacé de la YubiKey. Cette action est définitive." = "The account will be erased from the YubiKey. This cannot be undone.";
+
+/* Confirm button of the delete confirmation. */
+"Supprimer" = "Delete";
+
+/* Title of the rename editor. */
+"Renommer le compte" = "Rename the account";
+
+/* Field label in the rename editor and the add form. */
+"Émetteur" = "Issuer";
+
+/* Field label in the rename editor and the add form. */
+"Compte" = "Account";
+
+/* Placeholder of the account field. */
+"prenom@exemple.com" = "name@example.com";
+
+/* Confirm button of the rename editor; also the panel subtitle while it is
+   up. */
+"Renommer" = "Rename";
+
+/* --------------------------------------------------------------------------
+   AddAccountForm.swift — writing a new credential from the panel.
+   -------------------------------------------------------------------------- */
+
+/* Field label for the base32 secret. */
+"Clé secrète" = "Secret key";
+
+/* Picker label: code length. */
+"Chiffres" = "Digits";
+
+/* Picker label: TOTP window. */
+"Période" = "Period";
+
+/* Checkbox: the key must be touched before a code is computed. */
+"Exiger un contact physique" = "Require a physical touch";
+
+/* Button shown with the screen-recording permission message. */
+"Ouvrir Réglages" = "Open Settings";
+
+/* Button: fills the form from an otpauth:// link in the clipboard. */
+"Coller un lien" = "Paste a link";
+
+/* Button: reads a QR code from a region of the screen. */
+"Scanner l'écran" = "Scan the screen";
+
+/* Confirm button of the add form. */
+"Ajouter" = "Add";
+
+/* Message when the pasteboard holds nothing to import. */
+"Presse-papiers vide." = "Clipboard is empty.";
+
+/* Message after an otpauth:// link filled the form. */
+"Lien importé." = "Link imported.";
+
+/* --------------------------------------------------------------------------
+   CodeConfirmationView.swift — the confirmation sheet.
+   -------------------------------------------------------------------------- */
+
+/* VoiceOver label of the sensor after an attempt that did not go through. */
+"Réessayer la confirmation" = "Retry the confirmation";
+
+/* Sheet hint once the code has been handed over. */
+"Code copié dans le presse-papiers." = "Code copied to the clipboard.";
+
+/* Sheet hint while the key waits for a physical touch. */
+"Touche la clé." = "Touch the key.";
+
+/* Sheet hint while the key computes the code; also the panel subtitle and
+   the empty state title. */
+"Lecture de la clé…" = "Reading the key…";
+
+/* Sheet hint: the Touch ID gesture. */
+"Pose le doigt, ou double-clique sur le bouton latéral de ton Apple Watch." = "Rest your finger, or double-click the side button of your Apple Watch.";
+
+/* Sheet hint: the press-and-hold gesture. */
+"Maintiens la cible appuyée pour confirmer." = "Hold the target down to confirm.";
+
+/* --------------------------------------------------------------------------
+   HoldToConfirmView.swift — press-and-hold confirmation.
+   -------------------------------------------------------------------------- */
+
+/* VoiceOver label of the hold ring. */
+"Maintenir pour confirmer" = "Hold to confirm";
+
+/* --------------------------------------------------------------------------
+   NotchRootView.swift — everything drawn inside the notch panel.
+   -------------------------------------------------------------------------- */
+
+/* ⌘F shortcut button; also the search field's placeholder. */
+"Rechercher un compte" = "Search for an account";
+
+/* ⌘W shortcut button (hidden, keyboard only). */
+"Fermer" = "Close";
+
+/* Tooltip of the button that closes the add form. */
+"Retour à la liste" = "Back to the list";
+
+/* Tooltip of the header magnifier. */
+"Rechercher" = "Search";
+
+/* Tooltip of the header + button. */
+"Ajouter un compte" = "Add an account";
+
+/* Tooltip of the header gear button. */
+"Réglages" = "Settings";
+
+/* Panel subtitle while the add form is up. */
+"Nouveau compte" = "New account";
+
+/* Panel subtitle while the app waits for a key. */
+"Aucune clé détectée" = "No key detected";
+
+/* Panel subtitle: the user locked the panel on purpose. */
+"Verrouillée" = "Locked";
+
+/* Panel subtitle while the applet asks for a password. */
+"Mot de passe OATH" = "OATH password";
+
+/* Panel subtitle when the key holds no credential. */
+"Aucun compte OATH" = "No OATH accounts";
+
+/* VoiceOver label of the search field's clear button. */
+"Effacer la recherche" = "Clear the search";
+
+/* Empty state: no key attached. */
+"Branche ta YubiKey" = "Plug in your YubiKey";
+
+/* Empty state detail for the no-key case. */
+"En USB-C. Le panneau se met à jour dès qu'elle est détectée." = "Over USB-C. The panel catches up as soon as it is detected.";
+
+/* Empty state title when the key is attached but unusable. */
+"YubiKey indisponible" = "YubiKey unavailable";
+
+/* Empty state title after the user locked the panel. */
+"Verrouillé" = "Locked";
+
+/* Empty state detail after the user locked the panel. */
+"Quitte l'encoche et reviens pour réafficher tes comptes : chaque code demandera son empreinte." = "Leave the notch and come back to list your accounts again: every code will ask for its fingerprint.";
+
+/* Empty state detail while the applet is being opened. */
+"Les comptes apparaissent dès que l'applet OATH répond." = "The accounts appear as soon as the OATH applet answers.";
+
+/* Password prompt: why the password is being asked. */
+"La YubiKey demande le mot de passe de l'applet OATH." = "The YubiKey is asking for the OATH applet password.";
+
+/* Placeholder of the OATH password field. */
+"Mot de passe" = "Password";
+
+/* Checkbox of the password prompt. */
+"Mémoriser dans le trousseau" = "Remember in the keychain";
+
+/* Confirm button of the password prompt. */
+"Déverrouiller" = "Unlock";
+
+/* Empty state detail: the key holds no credential. */
+"Clique sur + pour enregistrer un compte depuis un lien otpauth:// ou un QR code." = "Click + to add an account from an otpauth:// link or a QR code.";
+
+/* Empty state title when the search matches nothing. */
+"Aucun résultat" = "No results";
+
+/* Empty state detail when the search matches nothing. %@ is the query. */
+"Aucun compte ne correspond à « %@ »." = "No account matches “%@”.";
+
+/* Footer hint: countdown before the copied code is wiped. %@ is a delay. */
+"Presse-papiers vidé dans %@" = "Clipboard wiped in %@";
+
+/* Footer hint: keyboard shortcuts. */
+"↑↓ naviguer · ⏎ confirmer · ⌘F rechercher" = "↑↓ navigate · ⏎ confirm · ⌘F search";
+
+/* Footer hint: what clicking a row does. */
+"Cliquer un compte demande une confirmation" = "Clicking an account asks for a confirmation";
+
+/* Message after the screen-recording permission was refused. */
+"Autorise l'enregistrement de l'écran, puis réessaie." = "Allow screen recording, then try again.";
+
+/* Message when the framed region holds no readable QR code. */
+"Aucun QR code otpauth:// trouvé dans la sélection." = "No otpauth:// QR code found in the selection.";
+
+/* VoiceOver label of the banner's close button. */
+"Fermer le message" = "Dismiss the message";
+
+/* --------------------------------------------------------------------------
+   ScreenRegionPicker.swift — framing a QR code on screen.
+   -------------------------------------------------------------------------- */
+
+/* Hint pill drawn over the dimmed screen during a selection. */
+"Sélectionne le QR code — Échap pour annuler" = "Select the QR code — Escape to cancel";
+
+/* A second selection was asked for while one was running. */
+"Une sélection est déjà en cours." = "A selection is already in progress.";
+
+/* The screen the drag started on has no display ID. */
+"Écran de la sélection introuvable." = "Screen of the selection not found.";
+
+/* The display is absent from ScreenCaptureKit's shareable content. */
+"Écran de la sélection absent de la liste de capture." = "Screen of the selection is missing from the capture list.";
+
+/* SCScreenshotManager returned neither an image nor an error. */
+"La capture d'écran a échoué." = "The screenshot failed.";
+
+/* --------------------------------------------------------------------------
+   SettingsView.swift — the preferences window.
+   -------------------------------------------------------------------------- */
+
+/* Tab title. */
+"Général" = "General";
+
+/* Tab title. */
+"À propos" = "About";
+
+/* Toggle: registers the app as a login item. */
+"Ouvrir à la connexion" = "Launch at login";
+
+/* Button shown when macOS is waiting for the login item to be approved. */
+"Ouvrir Réglages Système…" = "Open System Settings…";
+
+/* Footer of the General pane. */
+"NotchOTP démarre dans la barre de menus : aucune fenêtre, aucune icône dans le Dock." = "NotchOTP starts in the menu bar: no window, no Dock icon.";
+
+/* Footer of the confirmation-method picker. */
+"Chaque code est confirmé à part : une empreinte, ou un double-clic sur le bouton latéral d'une Apple Watch à proximité. Chaque confirmation se fait avec un contexte biométrique neuf, pour qu'un doigt resté sur le capteur ne puisse pas répondre à la place du suivant." = "Each code is confirmed on its own: a fingerprint, or a double-click on the side button of a nearby Apple Watch. Every confirmation uses a fresh biometric context, so a finger left on the sensor cannot answer in place of the next one.";
+
+/* Picker: delay before the copied code is wiped. */
+"Effacer le presse-papiers après" = "Wipe the clipboard after";
+
+/* Footer of the clipboard picker. */
+"Le presse-papiers n'est vidé que si le code copié s'y trouve encore : un texte copié entre-temps n'est jamais touché." = "The clipboard is wiped only if the copied code is still there: anything copied in the meantime is never touched.";
+
+/* Picker: delay before a confirmed code is masked again. */
+"Masquer les codes après" = "Mask the codes after";
+
+/* Footer of the masking picker. */
+"Un code confirmé disparaît de lui-même à la fin de sa fenêtre ; ce délai couvre ceux qui n'en ont pas, comme les codes HOTP. Le bouton Verrouiller du panneau, lui, referme tout de suite la session OATH : l'applet de la YubiKey se reverrouille, et il faut confirmer à nouveau." = "A confirmed code goes away on its own at the end of its window; this delay covers the ones that have none, like HOTP codes. The panel's Lock button closes the OATH session right away: the YubiKey applet relocks, and every code has to be confirmed again.";
+
+/* Toggle of the YubiKey pane. */
+"Mémoriser le mot de passe OATH dans le trousseau" = "Remember the OATH password in the keychain";
+
+/* Footer of the OATH password toggle. */
+"À activer si l'applet OATH de ta YubiKey est protégée par un mot de passe : le panneau ouvre alors l'applet tout seul et liste tes comptes. Le mot de passe est stocké dans le trousseau de session et ne sert qu'à cela : les codes, eux, demandent chacun une confirmation." = "Turn this on if your YubiKey's OATH applet is password protected: the panel then opens the applet by itself and lists your accounts. The password is stored in the session keychain and is used for nothing else — the codes themselves each ask for a confirmation.";
+
+/* Label of the smart-card diagnostic row. */
+"Carte à puce" = "Smart card";
+
+/* Smart-card diagnostic: the process sees no reader. */
+"Non accessible" = "Not accessible";
+
+/* Smart-card diagnostic footer, reader available. */
+"L'app voit le lecteur de cartes à puce du Mac : branche une YubiKey pour la déverrouiller." = "The app sees the Mac's smart-card reader: plug in a YubiKey to unlock it.";
+
+/* Smart-card diagnostic footer, reader unavailable. */
+"L'app ne voit aucun lecteur. Deux causes possibles : aucune YubiKey n'est branchée, ou cette copie n'a pas l'entitlement carte à puce — un binaire non signé ne voit jamais la clé, même branchée. Installe l'app produite par Scripts/build-app.sh pour lever le doute." = "The app sees no reader. Two possible causes: no YubiKey is plugged in, or this copy is missing the smart-card entitlement — an unsigned binary never sees the key, even plugged in. Install the app produced by Scripts/build-app.sh to rule it out.";
+
+/* Label of the bundle-identifier row in the About pane. */
+"Identifiant" = "Identifier";
+
+/* --------------------------------------------------------------------------
+   Identical in English — names, units and digits the panel shows as they are.
+   -------------------------------------------------------------------------- */
+
+/* Settings tab title, and the same word wherever the key is named. */
+"YubiKey" = "YubiKey";
+
+/* Panel title while the app waits for a key. */
+"NotchOTP" = "NotchOTP";
+
+/* Panel title with the key attached. %@ is the firmware version. */
+"YubiKey %@" = "YubiKey %@";
+
+/* Confirmation method: the fingerprint. */
+"Touch ID" = "Touch ID";
+
+/* Credential type picker. */
+"TOTP" = "TOTP";
+
+/* Credential type picker; also the badge on a counter-based row. */
+"HOTP" = "HOTP";
+
+/* Label of the credential type picker. */
+"Type" = "Type";
+
+/* Picker: how a code is confirmed. */
+"Confirmation" = "Confirmation";
+
+/* Smart-card diagnostic: the process sees a reader. */
+"Accessible" = "Accessible";
+
+/* About pane. %@ is the marketing version and the build number. */
+"Version %@" = "Version %@";
+
+/* Code length picker. */
+"6" = "6";
+
+/* Code length picker. */
+"8" = "8";
+
+/* TOTP period picker. */
+"30 s" = "30 s";
+
+/* TOTP period picker. */
+"60 s" = "60 s";
+
+/* Seconds left, drawn inside the countdown ring. */
+"%lld" = "%lld";
+
+/* --------------------------------------------------------------------------
+   Plurals. Two keys rather than a .stringsdict: the branch is written in Swift, in
+   AppController.statusDescription and NotchRootView.subtitle. `%lld` is an Int.
+   -------------------------------------------------------------------------- */
+
+/* One account, in the menu bar status line and the panel subtitle. */
+"1 compte" = "1 account";
+
+/* Any other count. */
+"%lld comptes" = "%lld accounts";

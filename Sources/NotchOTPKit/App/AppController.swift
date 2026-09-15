@@ -129,20 +129,20 @@ public final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegat
 
         switch service.status {
         case .ready:
-            menu.addItem(item("Verrouiller", #selector(lockNow), "l"))
+            menu.addItem(item(String(localized: "Verrouiller"), #selector(lockNow), "l"))
         case .locked:
-            menu.addItem(item("Ouvrir le panneau", #selector(openPanel), ""))
+            menu.addItem(item(String(localized: "Ouvrir le panneau"), #selector(openPanel), ""))
         case .searching, .unavailable:
             break
         }
 
-        menu.addItem(item("Ouvrir le panneau", #selector(openPanel), ""))
-        menu.addItem(item("Ajouter un compte…", #selector(addAccount), ""))
-        menu.addItem(item("Réglages…", #selector(showSettingsFromMenu), ","))
+        menu.addItem(item(String(localized: "Ouvrir le panneau"), #selector(openPanel), ""))
+        menu.addItem(item(String(localized: "Ajouter un compte…"), #selector(addAccount), ""))
+        menu.addItem(item(String(localized: "Réglages…"), #selector(showSettingsFromMenu), ","))
         menu.addItem(.separator())
-        menu.addItem(item("À propos de NotchOTP", #selector(showAbout), ""))
+        menu.addItem(item(String(localized: "À propos de NotchOTP"), #selector(showAbout), ""))
         menu.addItem(.separator())
-        menu.addItem(item("Quitter NotchOTP", #selector(quit), "q"))
+        menu.addItem(item(String(localized: "Quitter NotchOTP"), #selector(quit), "q"))
     }
 
     private func item(_ title: String, _ action: Selector, _ key: String) -> NSMenuItem {
@@ -154,12 +154,15 @@ public final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegat
     private var statusDescription: String {
         switch service.status {
         case .searching:
-            return "YubiKey non connectée"
+            return String(localized: "YubiKey non connectée")
         case .locked(let info):
-            return "YubiKey \(info.firmware) · verrouillée"
+            return String(localized: "YubiKey \(info.firmware) · verrouillée")
         case .ready(let info):
+            // Two keys rather than a .stringsdict: one line here against a whole new file
+            // format, for the sake of one word.
             let count = service.accounts.count
-            return "YubiKey \(info.firmware) · \(count) compte\(count > 1 ? "s" : "")"
+            let accounts = count == 1 ? String(localized: "1 compte") : String(localized: "\(count) comptes")
+            return "YubiKey \(info.firmware) · \(accounts)"
         case .unavailable(let message):
             return message
         }

@@ -58,6 +58,11 @@ targets:
       # CODE_SIGN_ENTITLEMENTS, neither of which belongs in Resources.
       - path: Resources/AppIcon.icns
         buildPhase: resources
+      # A folder reference, so the bundle gets Resources/en.lproj/Localizable.strings and
+      # not a loose file at the root of Resources.
+      - path: Resources/en.lproj
+        type: folder
+        buildPhase: resources
     dependencies:
       - target: NotchOTPKit
       # Linked again on purpose: a static library does not carry its own dependencies.

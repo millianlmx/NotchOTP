@@ -60,15 +60,15 @@ public final class LaunchAtLogin {
     public var statusDescription: String {
         switch service.status {
         case .enabled:
-            return "NotchOTP s'ouvre à l'ouverture de session."
+            return String(localized: "NotchOTP s'ouvre à l'ouverture de session.")
         case .notRegistered:
-            return "NotchOTP ne s'ouvre que lorsque tu la lances."
+            return String(localized: "NotchOTP ne s'ouvre que lorsque tu la lances.")
         case .requiresApproval:
-            return "Enregistrée : macOS attend ton autorisation dans Réglages Système → Général → Ouverture."
+            return String(localized: "Enregistrée : macOS attend ton autorisation dans Réglages Système → Général → Ouverture.")
         case .notFound:
-            return "Élément de connexion introuvable : lance l'app depuis son bundle."
+            return String(localized: "Élément de connexion introuvable : lance l'app depuis son bundle.")
         @unknown default:
-            return "État de l'élément de connexion inconnu."
+            return String(localized: "État de l'élément de connexion inconnu.")
         }
     }
 
@@ -90,12 +90,12 @@ public final class LaunchAtLogin {
 
     private static func message(for error: Error, enabling: Bool) -> String {
         let failure = error as NSError
-        let action = enabling ? "activer" : "désactiver"
+        let action = enabling ? String(localized: "activer") : String(localized: "désactiver")
         // SMAppService reports failures in `SMAppServiceErrorDomain` with a readable
         // reason ("Unable to read plist: …") and no public code list, so the system's
         // own sentence is what the user gets. The legacy `kSMError*` codes belong to the
         // job-based API and never show up here.
         let reason = failure.localizedFailureReason ?? failure.localizedDescription
-        return "Impossible d'\(action) l'ouverture à la connexion : \(reason)"
+        return String(localized: "Impossible d'\(action) l'ouverture à la connexion : \(reason)")
     }
 }

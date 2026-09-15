@@ -269,24 +269,24 @@ public struct NotchRootView: View {
             // is up, only the way out of it.
             if service.status.isReady, service.pending == nil {
                 if isAddingAccount {
-                    PanelIconButton(symbol: "chevron.backward", help: "Retour à la liste") {
+                    PanelIconButton(symbol: "chevron.backward", help: String(localized: "Retour à la liste")) {
                         isAddingAccount = false
                     }
                 } else {
-                    PanelIconButton(symbol: isSearching ? "xmark" : "magnifyingglass", help: "Rechercher") {
+                    PanelIconButton(symbol: isSearching ? "xmark" : "magnifyingglass", help: String(localized: "Rechercher")) {
                         isSearching.toggle()
                         if !isSearching { query = "" }
                     }
-                    PanelIconButton(symbol: "plus", help: "Ajouter un compte") {
+                    PanelIconButton(symbol: "plus", help: String(localized: "Ajouter un compte")) {
                         draft = CredentialDraft()
                         isAddingAccount = true
                     }
-                    PanelIconButton(symbol: "lock.fill", help: "Verrouiller") {
+                    PanelIconButton(symbol: "lock.fill", help: String(localized: "Verrouiller")) {
                         service.lock()
                     }
                 }
             }
-            PanelIconButton(symbol: "gearshape", help: "Réglages") { onOpenSettings() }
+            PanelIconButton(symbol: "gearshape", help: String(localized: "Réglages")) { onOpenSettings() }
         }
         .padding(.horizontal, PanelStyle.horizontalPadding)
         .frame(height: PanelStyle.headerHeight)
@@ -295,27 +295,28 @@ public struct NotchRootView: View {
     private var title: String {
         switch service.status {
         case .searching, .unavailable:
-            return "NotchOTP"
+            return String(localized: "NotchOTP")
         case .locked(let info), .ready(let info):
-            return "YubiKey \(info.firmware)"
+            return String(localized: "YubiKey \(info.firmware)")
         }
     }
 
     private var subtitle: String? {
-        if isAddingAccount { return "Nouveau compte" }
-        if renaming != nil { return "Renommer" }
-        if deletion != nil { return "Supprimer" }
+        if isAddingAccount { return String(localized: "Nouveau compte") }
+        if renaming != nil { return String(localized: "Renommer") }
+        if deletion != nil { return String(localized: "Supprimer") }
         switch service.status {
         case .searching:
-            return "Aucune clé détectée"
+            return String(localized: "Aucune clé détectée")
         case .unavailable(let message):
             return message
         case .locked:
-            if service.lockedByUser { return "Verrouillée" }
-            return service.passwordPrompt ? "Mot de passe OATH" : "Lecture de la clé…"
+            if service.lockedByUser { return String(localized: "Verrouillée") }
+            return service.passwordPrompt ? String(localized: "Mot de passe OATH") : String(localized: "Lecture de la clé…")
         case .ready:
             let count = service.accounts.count
-            return count == 0 ? "Aucun compte OATH" : "\(count) compte\(count > 1 ? "s" : "")"
+            if count == 0 { return String(localized: "Aucun compte OATH") }
+            return count == 1 ? String(localized: "1 compte") : String(localized: "\(count) comptes")
         }
     }
 
@@ -364,25 +365,25 @@ public struct NotchRootView: View {
         case .searching:
             placeholder(
                 symbol: "cable.connector",
-                title: "Branche ta YubiKey",
-                detail: "En USB-C. Le panneau se met à jour dès qu'elle est détectée."
+                title: String(localized: "Branche ta YubiKey"),
+                detail: String(localized: "En USB-C. Le panneau se met à jour dès qu'elle est détectée.")
             )
         case .unavailable(let message):
-            placeholder(symbol: "exclamationmark.triangle", title: "YubiKey indisponible", detail: message)
+            placeholder(symbol: "exclamationmark.triangle", title: String(localized: "YubiKey indisponible"), detail: message)
         case .locked:
             if service.passwordPrompt {
                 passwordPrompt
             } else if service.lockedByUser {
                 placeholder(
                     symbol: "lock.fill",
-                    title: "Verrouillé",
-                    detail: "Quitte l'encoche et reviens pour réafficher tes comptes : chaque code demandera son empreinte."
+                    title: String(localized: "Verrouillé"),
+                    detail: String(localized: "Quitte l'encoche et reviens pour réafficher tes comptes : chaque code demandera son empreinte.")
                 )
             } else {
                 placeholder(
                     symbol: "key.horizontal",
-                    title: "Lecture de la clé…",
-                    detail: "Les comptes apparaissent dès que l'applet OATH répond."
+                    title: String(localized: "Lecture de la clé…"),
+                    detail: String(localized: "Les comptes apparaissent dès que l'applet OATH répond.")
                 )
             }
         case .ready:
@@ -538,14 +539,14 @@ public struct NotchRootView: View {
             if service.accounts.isEmpty {
                 placeholder(
                     symbol: "person.badge.key",
-                    title: "Aucun compte OATH",
-                    detail: "Clique sur + pour enregistrer un compte depuis un lien otpauth:// ou un QR code."
+                    title: String(localized: "Aucun compte OATH"),
+                    detail: String(localized: "Clique sur + pour enregistrer un compte depuis un lien otpauth:// ou un QR code.")
                 )
             } else if filteredAccounts.isEmpty {
                 placeholder(
                     symbol: "magnifyingglass",
-                    title: "Aucun résultat",
-                    detail: "Aucun compte ne correspond à « \(query) »."
+                    title: String(localized: "Aucun résultat"),
+                    detail: String(localized: "Aucun compte ne correspond à « \(query) ».")
                 )
             }
         }
@@ -571,12 +572,12 @@ public struct NotchRootView: View {
     private var footerHint: String? {
         guard service.status.isReady, service.pending == nil, !hasTextEntry else { return nil }
         if let clearAt = service.clipboard.clearAt, clearAt > service.now {
-            return "Presse-papiers vidé dans \(CodeClock.label(remaining: clearAt.timeIntervalSince(service.now)))"
+            return String(localized: "Presse-papiers vidé dans \(CodeClock.label(remaining: clearAt.timeIntervalSince(service.now)))")
         }
         guard !service.accounts.isEmpty else { return nil }
         return window.hasKeyboardFocus
-            ? "↑↓ naviguer · ⏎ confirmer · ⌘F rechercher"
-            : "Cliquer un compte demande une confirmation"
+            ? String(localized: "↑↓ naviguer · ⏎ confirmer · ⌘F rechercher")
+            : String(localized: "Cliquer un compte demande une confirmation")
     }
 
     // MARK: - Screen scanning
@@ -595,11 +596,11 @@ public struct NotchRootView: View {
                 // Nothing to report: the user pressed Escape.
             } catch ScreenRegionPicker.Failure.permissionDenied {
                 draft.report(
-                    "Autorise l'enregistrement de l'écran, puis réessaie.",
+                    String(localized: "Autorise l'enregistrement de l'écran, puis réessaie."),
                     permissionHelp: true
                 )
             } catch ScreenRegionPicker.Failure.noCodeFound {
-                draft.report("Aucun QR code otpauth:// trouvé dans la sélection.")
+                draft.report(String(localized: "Aucun QR code otpauth:// trouvé dans la sélection."))
             } catch ScreenRegionPicker.Failure.captureFailed(let message) {
                 draft.report(message)
             } catch {

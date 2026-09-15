@@ -404,11 +404,11 @@ public final class YubiKeyService {
     private func authenticate() async -> Bool {
         confirmationGeneration += 1
         let generation = confirmationGeneration
-        let label = pending?.label ?? "ta YubiKey"
+        let label = pending?.label ?? String(localized: "ta YubiKey")
         authenticating = true
         Log.auth.notice("confirmation requested for « \(label, privacy: .public) »")
 
-        let outcome = await gate.authenticate(reason: "Copier le code de « \(label) »")
+        let outcome = await gate.authenticate(reason: String(localized: "Copier le code de « \(label) »"))
 
         guard generation == confirmationGeneration else {
             Log.auth.notice("ignoring stale confirmation outcome \(String(describing: outcome), privacy: .public)")
@@ -469,7 +469,7 @@ public final class YubiKeyService {
         await write { connection in
             let account = try await connection.session.addCredential(credential)
             try await self.list(connection)
-            return "« \(account.label) » ajouté sur la YubiKey."
+            return String(localized: "« \(account.label) » ajouté sur la YubiKey.")
         }
     }
 
@@ -479,7 +479,7 @@ public final class YubiKeyService {
         await write { connection in
             try await connection.session.deleteCredential(account)
             try await self.list(connection)
-            return "Compte supprimé."
+            return String(localized: "Compte supprimé.")
         }
     }
 
@@ -489,7 +489,7 @@ public final class YubiKeyService {
         await write { connection in
             try await connection.session.renameCredential(account, name: name, issuer: issuer)
             try await self.list(connection)
-            return "Compte renommé."
+            return String(localized: "Compte renommé.")
         }
     }
 

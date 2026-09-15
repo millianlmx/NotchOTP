@@ -19,12 +19,12 @@ public final class Settings {
 
         public var label: String {
             switch self {
-            case .never: return "Jamais"
-            case .fifteen: return "15 secondes"
-            case .thirty: return "30 secondes"
-            case .fortyFive: return "45 secondes"
-            case .minute: return "1 minute"
-            case .twoMinutes: return "2 minutes"
+            case .never: return String(localized: "Jamais")
+            case .fifteen: return String(localized: "15 secondes")
+            case .thirty: return String(localized: "30 secondes")
+            case .fortyFive: return String(localized: "45 secondes")
+            case .minute: return String(localized: "1 minute")
+            case .twoMinutes: return String(localized: "2 minutes")
             }
         }
     }
@@ -44,11 +44,11 @@ public final class Settings {
 
         public var label: String {
             switch self {
-            case .never: return "Jamais"
-            case .oneMinute: return "1 minute"
-            case .fiveMinutes: return "5 minutes"
-            case .fifteenMinutes: return "15 minutes"
-            case .thirtyMinutes: return "30 minutes"
+            case .never: return String(localized: "Jamais")
+            case .oneMinute: return String(localized: "1 minute")
+            case .fiveMinutes: return String(localized: "5 minutes")
+            case .fifteenMinutes: return String(localized: "15 minutes")
+            case .thirtyMinutes: return String(localized: "30 minutes")
             }
         }
     }
@@ -65,17 +65,17 @@ public final class Settings {
 
         public var label: String {
             switch self {
-            case .touchID: return "Touch ID"
-            case .hold: return "Appui maintenu"
+            case .touchID: return String(localized: "Touch ID")
+            case .hold: return String(localized: "Appui maintenu")
             }
         }
 
         public var detail: String {
             switch self {
             case .touchID:
-                return "Empreinte dans le panneau, ou double-clic sur le bouton latéral de ton Apple Watch — pour chaque code."
+                return String(localized: "Empreinte dans le panneau, ou double-clic sur le bouton latéral de ton Apple Watch — pour chaque code.")
             case .hold:
-                return "Maintenir la cible appuyée : pour les Macs sans capteur."
+                return String(localized: "Maintenir la cible appuyée : pour les Macs sans capteur.")
             }
         }
     }

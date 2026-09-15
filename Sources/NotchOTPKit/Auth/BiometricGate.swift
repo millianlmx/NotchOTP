@@ -64,14 +64,14 @@ public final class BiometricGate: BiometricAuthenticating {
         // being retired has no view and no evaluation left on it.
         current?.invalidate()
         let fresh = LAContext()
-        fresh.localizedCancelTitle = "Annuler"
+        fresh.localizedCancelTitle = String(localized: "Annuler")
         current = fresh
         Log.auth.notice("fresh biometric context for the next code")
     }
 
     public func authenticate(reason: String) async -> BiometricOutcome {
         guard let localContext = current else {
-            return .unavailable("Aucune confirmation en cours.")
+            return .unavailable(String(localized: "Aucune confirmation en cours."))
         }
 
         var error: NSError?
@@ -103,13 +103,13 @@ public final class BiometricGate: BiometricAuthenticating {
             case .biometryNotAvailable, .biometryNotEnrolled:
                 return .unavailable(Self.describe(error))
             case .biometryLockout:
-                return .failed("Touch ID est verrouillé après trop de tentatives.")
+                return .failed(String(localized: "Touch ID est verrouillé après trop de tentatives."))
             case .invalidContext:
-                return .unavailable("Session biométrique invalide, relance l'app.")
+                return .unavailable(String(localized: "Session biométrique invalide, relance l'app."))
             case .companionNotAvailable:
                 // Only reachable when the policy insisted on a companion; the
                 // biometrics-or-companion one falls back on its own.
-                return .unavailable("Aucun appareil à proximité pour confirmer.")
+                return .unavailable(String(localized: "Aucun appareil à proximité pour confirmer."))
             default:
                 return .failed(Self.describe(failure))
             }
@@ -118,15 +118,15 @@ public final class BiometricGate: BiometricAuthenticating {
         }
     }
 
-    private static let refusedMessage = "Confirmation refusée."
+    private static let refusedMessage = String(localized: "Confirmation refusée.")
 
     private static func describe(_ error: Error?) -> String {
-        guard let error else { return "Aucun moyen de confirmer sur ce Mac." }
+        guard let error else { return String(localized: "Aucun moyen de confirmer sur ce Mac.") }
         switch (error as? LAError)?.code {
         case .biometryNotEnrolled:
-            return "Aucune empreinte enregistrée sur ce Mac."
+            return String(localized: "Aucune empreinte enregistrée sur ce Mac.")
         case .biometryNotAvailable:
-            return "Touch ID indisponible — utilise l'appui maintenu dans les réglages."
+            return String(localized: "Touch ID indisponible — utilise l'appui maintenu dans les réglages.")
         default:
             return error.localizedDescription
         }

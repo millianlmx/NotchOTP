@@ -23,9 +23,9 @@ struct AddAccountForm: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            PanelLabeledField(label: "Émetteur", prompt: "GitHub", text: $draft.issuer, focus: $focus, field: .issuer)
-            PanelLabeledField(label: "Compte", prompt: "prenom@exemple.com", text: $draft.name, focus: $focus, field: .name)
-            PanelLabeledField(label: "Clé secrète", prompt: "JBSWY3DPEHPK3PXP", text: $draft.secret, focus: $focus, field: .secret)
+            PanelLabeledField(label: String(localized: "Émetteur"), prompt: "GitHub", text: $draft.issuer, focus: $focus, field: .issuer)
+            PanelLabeledField(label: String(localized: "Compte"), prompt: String(localized: "prenom@exemple.com"), text: $draft.name, focus: $focus, field: .name)
+            PanelLabeledField(label: String(localized: "Clé secrète"), prompt: "JBSWY3DPEHPK3PXP", text: $draft.secret, focus: $focus, field: .secret)
 
             HStack(spacing: 10) {
                 Picker("Type", selection: $draft.isHOTP) {
@@ -166,7 +166,7 @@ struct CredentialDraft: Equatable {
         guard let text = NSPasteboard.general.string(forType: .string),
             !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         else {
-            report("Presse-papiers vide.")
+            report(String(localized: "Presse-papiers vide."))
             return
         }
         apply(otpauthURI: text)
@@ -191,7 +191,7 @@ struct CredentialDraft: Equatable {
                 isHOTP = true
                 digits = count
             }
-            message = "Lien importé."
+            message = String(localized: "Lien importé.")
             isImported = true
         }
     }

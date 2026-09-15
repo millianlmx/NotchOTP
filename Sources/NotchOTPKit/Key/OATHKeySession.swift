@@ -152,7 +152,7 @@ private actor OATHSessionAdapter: OATHSessionProtocol {
     func renameCredential(_ account: OATHAccount, name: String, issuer: String?) async throws {
         guard let credential = credentials[account.id] else { throw OATHFailure.credentialMissing }
         guard await session.supports(.rename) else {
-            throw OATHFailure.device("Cette YubiKey ne sait pas renommer un compte.")
+            throw OATHFailure.device(String(localized: "Cette YubiKey ne sait pas renommer un compte."))
         }
         do {
             try await session.renameCredential(credential, newName: name, newIssuer: issuer)
@@ -240,12 +240,12 @@ extension OATHFailure {
                 case .conditionsNotSatisfied:
                     return .touchRequired
                 case .fileNotFound, .referencedDataNotFound, .invalidInstruction:
-                    return .device("Cette YubiKey n'expose pas l'applet OATH.")
+                    return .device(String(localized: "Cette YubiKey n'expose pas l'applet OATH."))
                 default:
-                    return .device("YubiKey : réponse \(response.status.description).")
+                    return .device(String(localized: "YubiKey : réponse \(response.status.description)."))
                 }
             case .featureNotSupported:
-                return .device("Cette YubiKey ne gère pas cette fonction OATH.")
+                return .device(String(localized: "Cette YubiKey ne gère pas cette fonction OATH."))
             default:
                 return .device(oath.localizedDescription)
             }
@@ -263,18 +263,18 @@ extension OATHFailure {
         case .busy:
             return .keyBusy
         case .connectionLost:
-            return .keyUnavailable("YubiKey débranchée.")
+            return .keyUnavailable(String(localized: "YubiKey débranchée."))
         case .noDevicesFound:
-            return .keyUnavailable("Aucune YubiKey détectée.")
+            return .keyUnavailable(String(localized: "Aucune YubiKey détectée."))
         case .cancelled, .cancelledByUser:
-            return .keyUnavailable("Connexion annulée.")
+            return .keyUnavailable(String(localized: "Connexion annulée."))
         case .unsupported:
             return .readerUnavailable
         case .setupFailed(let message, _), .transmitFailed(let message, _),
             .malformedData(let message), .pollingFailed(let message):
-            return .device(message ?? "Échec de communication avec la YubiKey.")
+            return .device(message ?? String(localized: "Échec de communication avec la YubiKey."))
         @unknown default:
-            return .device("Échec de communication avec la YubiKey.")
+            return .device(String(localized: "Échec de communication avec la YubiKey."))
         }
     }
 }

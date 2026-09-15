@@ -129,14 +129,14 @@ struct CodeConfirmationView: View {
     }
 
     private var hintText: String {
-        if code != nil { return "Code copié dans le presse-papiers." }
+        if code != nil { return String(localized: "Code copié dans le presse-papiers.") }
         switch phase {
         case .reading:
-            return account.requiresTouch ? "Touche la clé." : "Lecture de la clé…"
+            return account.requiresTouch ? String(localized: "Touche la clé.") : String(localized: "Lecture de la clé…")
         case .waiting, .copied:
             return method == .touchID
-                ? "Pose le doigt, ou double-clique sur le bouton latéral de ton Apple Watch."
-                : "Maintiens la cible appuyée pour confirmer."
+                ? String(localized: "Pose le doigt, ou double-clique sur le bouton latéral de ton Apple Watch.")
+                : String(localized: "Maintiens la cible appuyée pour confirmer.")
         }
     }
 }

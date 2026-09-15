@@ -26,7 +26,7 @@ public final class ScreenRegionPicker {
     /// Anything smaller (in points) is a stray click rather than a selection.
     private static let minimumSide: CGFloat = 8
     private static let escapeKeyCode: UInt16 = 53
-    private static let hint = "Sélectionne le QR code — Échap pour annuler"
+    private static let hint = String(localized: "Sélectionne le QR code — Échap pour annuler")
     /// The window server needs a beat to actually take the overlays off screen, and the
     /// screenshot grabs whatever is composited right now.
     private static let overlayHideDelay = Duration.milliseconds(120)
@@ -51,7 +51,7 @@ public final class ScreenRegionPicker {
     /// framed. The overlays are closed on every exit path, success included.
     public func pickOTPAuthRegion() async throws(Failure) -> String {
         guard completion == nil else {
-            throw Failure.captureFailed("Une sélection est déjà en cours.")
+            throw Failure.captureFailed(String(localized: "Une sélection est déjà en cours."))
         }
         presentOverlays()
 
@@ -160,10 +160,10 @@ public final class ScreenRegionPicker {
         }
 
         guard let displayID = Self.displayID(of: screen) else {
-            return .failure(.captureFailed("Écran de la sélection introuvable."))
+            return .failure(.captureFailed(String(localized: "Écran de la sélection introuvable.")))
         }
         guard let display = content.displays.first(where: { $0.displayID == displayID }) else {
-            return .failure(.captureFailed("Écran de la sélection absent de la liste de capture."))
+            return .failure(.captureFailed(String(localized: "Écran de la sélection absent de la liste de capture.")))
         }
 
         let configuration = SCStreamConfiguration()
@@ -209,7 +209,7 @@ public final class ScreenRegionPicker {
                 } else if let error {
                     continuation.resume(returning: .failure(failure(from: error)))
                 } else {
-                    continuation.resume(returning: .failure(.captureFailed("La capture d'écran a échoué.")))
+                    continuation.resume(returning: .failure(.captureFailed(String(localized: "La capture d'écran a échoué."))))
                 }
             }
         }

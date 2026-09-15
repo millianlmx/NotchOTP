@@ -98,3 +98,90 @@ not, because they need a signed build and a human:
   system login items.
 - **Display sleep, session lock, key unplugged**: the three moments that must wipe the
   revealed codes.
+
+## The listing
+
+Everything App Store Connect asks for, ready to paste. The form itself: platform **macOS**,
+bundle ID **app.notchotp**, SKU **notchotp**, Full Access, primary language **English**
+(the app ships English and French; French is the development region).
+
+**Name** — `NotchOTP` (fallback if taken: `NotchOTP: YubiKey codes`)
+
+**Subtitle** (30 characters) — `YubiKey codes in the notch`
+
+**Keywords** (100 characters) —
+`yubikey,totp,hotp,2fa,otp,authenticator,oath,security key,menu bar,notch`
+
+**Support URL** — `https://github.com/millianlmx/NotchOTP/issues`
+**Marketing URL** — `https://github.com/millianlmx/NotchOTP`
+**Privacy policy URL** — `https://github.com/millianlmx/NotchOTP/blob/main/docs/privacy.md`
+
+**Category** — Utilities · **Price** — Free · **Age rating** — 4+ · **App Privacy** —
+Data Not Collected
+
+**Screenshots** — 1280×800 or larger. The two in `docs/` are too small for the store; take
+real ones of the panel open over a desktop, and one of the settings window.
+
+**Promotional text** (170 characters) —
+
+```
+You don't pick a TOTP secret off the Mac. The key computes the code, you confirm with a
+fingerprint, and it lands in the clipboard.
+```
+
+**Description** —
+
+```
+NotchOTP puts your one-time codes where you already look: the notch.
+
+Hover it and the panel opens on your accounts. Click one, touch the sensor, and the code is
+on your clipboard. The secrets never leave your YubiKey — the app stores nothing, syncs
+nothing, and sends nothing.
+
+ONE FINGERPRINT PER CODE
+Every code asks for its own confirmation. Nothing is revealed by a stray click, and a code
+you have shown once does not come back without a new gesture. Apple's own biometric prompt
+is drawn inside the panel, never as a system alert floating somewhere else.
+
+NOTHING LEAVES YOUR MAC
+The codes are computed inside the YubiKey's OATH applet; the app receives the six- or
+eight-digit result and nothing else. No account, no telemetry, no network connection at all.
+
+BUILT FOR THE NOTCH
+Collapsed, the panel draws nothing — the physical notch hides it entirely. It never steals
+the keyboard, and it leaves no icon in the Dock.
+
+ALSO
+• Add accounts by typing, by pasting an otpauth:// link, or by scanning a QR code on screen
+• TOTP and HOTP, 6 or 8 digits, 30 or 60 second periods, touch-required credentials
+• Search, keyboard navigation, rename and delete without leaving the panel
+• Lock wipes the revealed codes and relocks the key's applet
+• The clipboard is wiped after the delay you choose, and only if it still holds the code
+• Macs without Touch ID confirm with a press and hold instead
+
+REQUIREMENTS
+• A Mac with a notch (elsewhere only the menu bar icon is available)
+• macOS 14 or later
+• A YubiKey with OATH credentials already stored
+• Touch ID, an Apple Watch, or the press-and-hold mode, to confirm
+
+No YubiKey at hand? Launch it with -demo to see the panel with four demo accounts.
+```
+
+**Notes for Review** —
+
+```
+NotchOTP reads one-time codes from a YubiKey's OATH applet, so it needs hardware to do its
+real job. To try it without a key:
+
+    open -a NotchOTP --args -demo
+
+The panel then lists four demo accounts whose codes really rotate, and the fingerprint
+prompt is simulated. Adding -confirm opens the panel at once and confirms the first account:
+
+    open -a NotchOTP --args -demo -confirm
+
+With a real YubiKey plugged in, the same command exercises the whole path: list the
+credentials, show the confirmation sheet, wait for a fingerprint, copy the code. Everything
+the app does is logged to the unified log under the app.notchotp subsystem.
+```

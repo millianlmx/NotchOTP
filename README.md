@@ -51,6 +51,7 @@ syncs, and **a code shown once does not come back without a new gesture**.
 | **A Mac with a notch** | Without one (or on an external display), only the menu bar icon is available |
 | **macOS 14 or later** | and Touch ID, or an Apple Watch, to confirm |
 | **A USB-C YubiKey** | with OATH credentials already stored (`Yubico Authenticator`, or `ykman oath accounts add`) |
+| **English or French** | the panel follows your Mac's language |
 
 ## Install
 

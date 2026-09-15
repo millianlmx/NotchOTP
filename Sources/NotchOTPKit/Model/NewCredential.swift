@@ -60,13 +60,13 @@ public struct NewCredential: Sendable, Equatable {
         /// Message shown in the notch panel.
         public var userMessage: String {
             switch self {
-            case .unsupportedScheme: return "Lien otpauth:// attendu."
-            case .missingName: return "Nom du compte manquant."
-            case .missingSecret: return "Clé secrète manquante."
-            case .invalidSecret: return "Clé secrète invalide (base32, 10 octets minimum)."
-            case .unsupportedType: return "Type non supporté (TOTP ou HOTP)."
-            case .missingCounter: return "Compteur HOTP manquant."
-            case .invalidValue: return "Valeur invalide dans le lien."
+            case .unsupportedScheme: return String(localized: "Lien otpauth:// attendu.")
+            case .missingName: return String(localized: "Nom du compte manquant.")
+            case .missingSecret: return String(localized: "Clé secrète manquante.")
+            case .invalidSecret: return String(localized: "Clé secrète invalide (base32, 10 octets minimum).")
+            case .unsupportedType: return String(localized: "Type non supporté (TOTP ou HOTP).")
+            case .missingCounter: return String(localized: "Compteur HOTP manquant.")
+            case .invalidValue: return String(localized: "Valeur invalide dans le lien.")
             }
         }
     }

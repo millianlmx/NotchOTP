@@ -11,9 +11,9 @@ public enum SettingsTab: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
-        case .general: "Général"
-        case .key: "YubiKey"
-        case .about: "À propos"
+        case .general: String(localized: "Général")
+        case .key: String(localized: "YubiKey")
+        case .about: String(localized: "À propos")
         }
     }
 

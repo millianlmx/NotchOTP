@@ -96,21 +96,21 @@ public enum OATHFailure: Error, Equatable, Sendable {
     public var userMessage: String {
         switch self {
         case .readerUnavailable:
-            return "Aucune YubiKey détectée."
+            return String(localized: "Aucune YubiKey détectée.")
         case .keyUnavailable(let detail):
-            return detail.isEmpty ? "YubiKey indisponible." : detail
+            return detail.isEmpty ? String(localized: "YubiKey indisponible.") : detail
         case .keyBusy:
-            return "YubiKey occupée par une autre application."
+            return String(localized: "YubiKey occupée par une autre application.")
         case .passwordRequired:
-            return "Mot de passe OATH requis."
+            return String(localized: "Mot de passe OATH requis.")
         case .wrongPassword:
-            return "Mot de passe OATH incorrect."
+            return String(localized: "Mot de passe OATH incorrect.")
         case .touchRequired:
-            return "Touche ta YubiKey."
+            return String(localized: "Touche ta YubiKey.")
         case .credentialMissing:
-            return "Ce compte n'existe plus sur la YubiKey."
+            return String(localized: "Ce compte n'existe plus sur la YubiKey.")
         case .device(let detail):
-            return detail.isEmpty ? "Erreur de communication avec la YubiKey." : detail
+            return detail.isEmpty ? String(localized: "Erreur de communication avec la YubiKey.") : detail
         }
     }
 }

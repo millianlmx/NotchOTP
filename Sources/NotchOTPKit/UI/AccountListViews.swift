@@ -152,12 +152,12 @@ struct AccountRowView: View {
     private var accessibilityValue: String {
         guard let code else {
             return account.requiresTouch
-                ? "Code masqué. Confirmation requise, la clé demandera un contact."
-                : "Code masqué. Confirmation requise."
+                ? String(localized: "Code masqué. Confirmation requise, la clé demandera un contact.")
+                : String(localized: "Code masqué. Confirmation requise.")
         }
         guard let period = account.period else { return code.code }
         let remaining = Int(CodeClock.remaining(until: code.validTo, now: now).rounded(.up))
-        return "\(code.code), encore \(remaining) secondes sur \(Int(period))"
+        return String(localized: "\(code.code), encore \(remaining) secondes sur \(Int(period))")
     }
 }
 
@@ -273,8 +273,8 @@ struct RenameAccountForm: View {
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundStyle(.primary)
 
-            PanelLabeledField(label: "Émetteur", prompt: "GitHub", text: $issuer, focus: $focus, field: .issuer)
-            PanelLabeledField(label: "Compte", prompt: "prenom@exemple.com", text: $name, focus: $focus, field: .name)
+            PanelLabeledField(label: String(localized: "Émetteur"), prompt: "GitHub", text: $issuer, focus: $focus, field: .issuer)
+            PanelLabeledField(label: String(localized: "Compte"), prompt: String(localized: "prenom@exemple.com"), text: $name, focus: $focus, field: .name)
 
             Spacer(minLength: 0)
 
