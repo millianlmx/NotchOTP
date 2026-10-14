@@ -11,7 +11,7 @@ import Testing
 /// Serialized on purpose: `NSEvent` monitors are app-wide, so a second test sending
 /// events at the same time would drive this panel too.
 @MainActor
-@Suite(.serialized)
+@Suite(.serialized, .requiresNotchedScreen)
 struct PanelInteractionTests {
 
     /// Opening the panel is what makes the app ask the key for its contents — and nothing

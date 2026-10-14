@@ -63,7 +63,7 @@ private func action(
 }
 
 @MainActor
-@Test func thePanelWatchesPointerEventsInAndOutOfTheApp() {
+@Test(.requiresNotchedScreen) func thePanelWatchesPointerEventsInAndOutOfTheApp() {
     _ = NSApplication.shared
     let controller = NotchWindowController()
     controller.start()
