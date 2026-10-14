@@ -1,0 +1,35 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ["Marketing/**", "docs/**", "*.md"]
+  pull_request:
+    paths-ignore: ["Marketing/**", "docs/**", "*.md"]
+
+jobs:
+  build:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/cache@v4
+        with:
+          path: .build
+          key: spm-${{ runner.os }}-${{ hashFiles('Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      - name: Build
+        run: swift build -c release --product NotchOTP
+
+      # The AppKit suites open real windows and pump the run loop; sharing a process with the
+      # service tests makes eight of them fail, so the suites run separately.
+      - name: Test
+        run: |
+          swift build --build-tests
+          for suite in NotchGeometryTests PanelLogicTests ScreenPermissionTests SettingsTests \
+                       CredentialParsingTests CredentialTemplateTests FailureMappingTests \
+                       NotchPointerTests BarcodeScannerTests BiometricGateTests ClipboardTests \
+                       CodeClockTests YubiKeyServiceTests PanelInteractionTests; do
+            swift test --skip-build --filter "$suite"
+          done

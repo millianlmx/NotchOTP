@@ -50,9 +50,10 @@ and no nested framework to sign (the kit is a static library, like SwiftPM produ
    TEAM_ID=ABCDE12345 Scripts/archive-app.sh --upload
    ```
 
-   With an App Store Connect API key in the environment (`ASC_KEY_ID` and `ASC_ISSUER_ID`,
-   from App Store Connect → Users and Access → Integrations) the script uses `altool`
-   instead, which is the one to pick when automating.
+   With an App Store Connect API key in the environment (`ASC_KEY_ID`, `ASC_ISSUER_ID` and
+   `ASC_KEY_PATH`, the key coming from App Store Connect → Users and Access → Integrations)
+   xcodebuild signs, provisions and uploads with the key instead of the account session —
+   that is what the release workflow below relies on.
 
 5. **The listing**: description, the 1024×1024 icon (the bundle carries an `.icns`; the
    marketing icon is uploaded in App Store Connect), screenshots, and privacy — "Data not
@@ -68,6 +69,41 @@ and no nested framework to sign (the kit is a static library, like SwiftPM produ
 
    Then draw it hung from the top edge of a 2560×1600 canvas. The whole thing is scripted —
    see **[Screenshots](#screenshots)** below.
+
+## Releasing from GitHub Actions
+
+Two workflows, in `.github/workflows/`:
+
+| Workflow | Trigger | What it does |
+| --- | --- | --- |
+| `ci.yml` | push to `main`, pull requests | `swift build`, then the test suites one by one — the AppKit suites and the service tests fail when they share a process |
+| `release.yml` | tag `vX.Y`, or *Run workflow* with a version | `Scripts/archive-app.sh --upload` on a `macos-26` runner: archive, export, upload to App Store Connect |
+
+The version is the tag without its `v`; the build number is the workflow run number, so two
+runs never collide. Nothing is attached to a GitHub release — the store is the only channel —
+but the `.xcarchive` stays as a workflow artifact for two weeks, which is the build to launch
+locally if a review comes back (the store-signed payload cannot be launched outside the store).
+
+```bash
+git tag v1.1 && git push origin v1.1
+```
+
+The runner has no Apple account, so everything Xcode would otherwise fetch is a repository
+secret (Settings → Secrets and variables → Actions):
+
+| Secret | Content |
+| --- | --- |
+| `APPLE_TEAM_ID` | The team identifier, as in `TEAM_ID` above |
+| `APPLE_CERTIFICATES_P12` | A `.p12` exported from Keychain Access, base64-encoded (`base64 -i certs.p12 \| pbcopy`), holding **three** identities with their private keys: *Apple Development* (the archive is signed with it), *Apple Distribution* (the app in the package) and *Mac Installer Distribution* (the package itself). Select the three certificates in Keychain Access and export them together. Missing ones are created from Xcode → Settings → Accounts → Manage Certificates |
+| `APPLE_CERTIFICATES_PASSWORD` | The password given at export |
+| `ASC_KEY_ID`, `ASC_ISSUER_ID` | An App Store Connect API key with the **App Manager** role, and its issuer id |
+| `ASC_API_KEY_P8` | The content of the `AuthKey_<id>.p8` file, as is |
+
+The certificates land in a throwaway keychain that is deleted at the end of the job; the
+provisioning profile is fetched by `-allowProvisioningUpdates` with the API key, so there is
+no profile to export. If a certificate is missing from the `.p12`, Xcode creates one on the
+team with `-allowProvisioningUpdates` — and its private key dies with the runner, so export
+the real ones rather than let that happen.
 
 ## Screenshots
 
