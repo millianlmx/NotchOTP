@@ -77,18 +77,33 @@ Two workflows, in `.github/workflows/`:
 | Workflow | Trigger | What it does |
 | --- | --- | --- |
 | `ci.yml` | push to `main`, pull requests | `swift build`, then the test suites one by one — the AppKit suites and the service tests fail when they share a process |
-| `release.yml` | tag `vX.Y`, or *Run workflow* with a version | `Scripts/archive-app.sh --upload` on a `macos-26` runner: archive, export, upload to App Store Connect |
+| `release.yml` | push to `main` | Picks the next version from the commits, creates the tag and the GitHub release with its notes, then runs `Scripts/archive-app.sh --upload` on a `macos-26` runner: archive, export, upload to App Store Connect |
 
-The version is the tag without its `v`; the build number is the commit count on the tagged
-commit (`git rev-list --count HEAD`) — App Store Connect refuses any upload whose
-`CFBundleVersion` is not above the last one, whatever the version, and the count only goes
-up on `main`. Nothing is attached to a GitHub release — the store is the only channel —
-but the `.xcarchive` stays as a workflow artifact for two weeks, which is the build to launch
+There is no release command: a push to `main` is one. `Scripts/next-release.sh` reads the
+Conventional Commits since the last `v*` tag and decides —
+
+| Commits since the last tag | Bump | Example |
+| --- | --- | --- |
+| `type!:` or a `BREAKING CHANGE` footer | major | `1.1` → `2.0` |
+| `feat` | minor | `1.1` → `1.2` |
+| `fix`, `perf` | patch | `1.1` → `1.1.1` |
+| only `docs`, `test`, `build`, `ci`, `refactor`, … | none | nothing happens |
+
+Versions are written the way the store shows them — two components, a third only for a
+patch. `Scripts/next-release.sh --notes` prints what goes on the GitHub release: breaking
+changes, features, fixes, then the rest, one line per commit with its scope and hash. *Run
+workflow* with a `version` input forces a version instead of deriving one.
+
+The build number is the commit count on `main` (`git rev-list --count HEAD`) — App Store
+Connect refuses any upload whose `CFBundleVersion` is not above the last one, whatever the
+version, and the count only goes up. The store also closes a version once it is approved:
+the next upload needs a higher `CFBundleShortVersionString`, which the bump rules give.
+Nothing is attached to the GitHub release but the notes — the store is the only channel —
+and the `.xcarchive` stays as a workflow artifact for two weeks, which is the build to launch
 locally if a review comes back (the store-signed payload cannot be launched outside the store).
 
-```bash
-git tag v1.1 && git push origin v1.1
-```
+What the workflow does not do is submit: once Apple has processed the build, create the
+version on App Store Connect, pick the build, paste the notes, and send it to review.
 
 The runner has no Apple account, so everything Xcode would otherwise fetch is a repository
 secret (Settings → Secrets and variables → Actions):

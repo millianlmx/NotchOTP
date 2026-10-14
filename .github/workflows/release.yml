@@ -1,8 +1,12 @@
-# Pushing a tag `vX.Y` archives the app, exports the Mac App Store package and uploads it to
-# App Store Connect. The version is the tag, the build number the commit count on the tagged
-# commit — App Store Connect wants it strictly higher than the last upload, whatever the
-# version, and the workflow's run number restarted at 1 below the build already on the
-# store. Nothing is published on GitHub: the store is the only distribution channel.
+# Every push to main that carries a releasable commit — feat, fix, perf, or a breaking
+# change, in the Conventional Commits sense — becomes a release: Scripts/next-release.sh
+# picks the version, the tag and the GitHub release (with the notes) are created, then the
+# app is archived, exported and uploaded to App Store Connect under that version. A push of
+# docs, tests or CI alone releases nothing.
+#
+# The build number is the commit count on main — App Store Connect wants it strictly higher
+# than the last upload, whatever the version. Nothing but the notes is published on GitHub:
+# the store is the only distribution channel.
 #
 # Secrets (Settings → Secrets and variables → Actions) — see docs/app-store.md:
 #   APPLE_TEAM_ID                  the developer team identifier
@@ -15,24 +19,67 @@ name: Release
 
 on:
   push:
-    tags: ["v*"]
+    branches: [main]
   workflow_dispatch:
     inputs:
       version:
-        description: "Marketing version (e.g. 1.1); defaults to the pushed tag"
+        description: "Force this version (e.g. 1.2) instead of deriving it from the commits"
         required: false
 
 concurrency:
   group: release
   cancel-in-progress: false
 
+permissions:
+  contents: write
+
 jobs:
-  app-store:
-    runs-on: macos-26
+  version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.next.outputs.version }}
+      build: ${{ steps.next.outputs.build }}
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Decide the version
+        id: next
+        env:
+          VERSION: ${{ inputs.version }}
+        run: |
+          version="$(Scripts/next-release.sh)"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "build=$(git rev-list --count HEAD)" >> "$GITHUB_OUTPUT"
+          if [[ -z "$version" ]]; then
+            echo "Nothing to release since $(git describe --tags --abbrev=0 --match 'v*')."
+          elif git rev-parse -q --verify "refs/tags/v$version" >/dev/null; then
+            echo "::error::v$version already exists"
+            exit 1
+          else
+            echo "Releasing $version"
+          fi
+
+      - name: Tag and publish the release notes
+        if: steps.next.outputs.version != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.next.outputs.version }}
+        run: |
+          Scripts/next-release.sh --notes > "$RUNNER_TEMP/notes.md"
+          cat "$RUNNER_TEMP/notes.md"
+          gh release create "v$VERSION" \
+            --target "$GITHUB_SHA" \
+            --title "NotchOTP $VERSION" \
+            --notes-file "$RUNNER_TEMP/notes.md"
+
+  app-store:
+    needs: version
+    if: needs.version.outputs.version != ''
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@v4
 
       # Secrets are materialised under the runner's temp directory, outside the workspace.
       - name: Choose where the signing material lives
@@ -74,14 +121,9 @@ jobs:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          VERSION: ${{ needs.version.outputs.version }}
+          BUILD_NUMBER: ${{ needs.version.outputs.build }}
         run: |
-          if [[ -n "${{ inputs.version }}" ]]; then
-            VERSION="${{ inputs.version }}"
-          else
-            VERSION="${GITHUB_REF_NAME#v}"
-          fi
-          BUILD_NUMBER="$(git rev-list --count HEAD)"
-          export VERSION BUILD_NUMBER
           echo "Version $VERSION ($BUILD_NUMBER)"
           Scripts/archive-app.sh --upload
 
@@ -91,7 +133,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: NotchOTP-${{ github.run_number }}.xcarchive
+          name: NotchOTP-${{ needs.version.outputs.version }}-${{ needs.version.outputs.build }}.xcarchive
           path: build/NotchOTP.xcarchive
           if-no-files-found: ignore
           retention-days: 14
