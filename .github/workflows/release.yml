@@ -1,6 +1,8 @@
 # Pushing a tag `vX.Y` archives the app, exports the Mac App Store package and uploads it to
-# App Store Connect. The version is the tag, the build number the run number. Nothing is
-# published on GitHub: the store is the only distribution channel.
+# App Store Connect. The version is the tag, the build number the commit count on the tagged
+# commit — App Store Connect wants it strictly higher than the last upload, whatever the
+# version, and the workflow's run number restarted at 1 below the build already on the
+# store. Nothing is published on GitHub: the store is the only distribution channel.
 #
 # Secrets (Settings → Secrets and variables → Actions) — see docs/app-store.md:
 #   APPLE_TEAM_ID                  the developer team identifier
@@ -29,6 +31,8 @@ jobs:
     runs-on: macos-26
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       # Secrets are materialised under the runner's temp directory, outside the workspace.
       - name: Choose where the signing material lives
@@ -70,14 +74,14 @@ jobs:
           TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
           ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
-          BUILD_NUMBER: ${{ github.run_number }}
         run: |
           if [[ -n "${{ inputs.version }}" ]]; then
             VERSION="${{ inputs.version }}"
           else
             VERSION="${GITHUB_REF_NAME#v}"
           fi
-          export VERSION
+          BUILD_NUMBER="$(git rev-list --count HEAD)"
+          export VERSION BUILD_NUMBER
           echo "Version $VERSION ($BUILD_NUMBER)"
           Scripts/archive-app.sh --upload
 

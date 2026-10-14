@@ -79,8 +79,10 @@ Two workflows, in `.github/workflows/`:
 | `ci.yml` | push to `main`, pull requests | `swift build`, then the test suites one by one — the AppKit suites and the service tests fail when they share a process |
 | `release.yml` | tag `vX.Y`, or *Run workflow* with a version | `Scripts/archive-app.sh --upload` on a `macos-26` runner: archive, export, upload to App Store Connect |
 
-The version is the tag without its `v`; the build number is the workflow run number, so two
-runs never collide. Nothing is attached to a GitHub release — the store is the only channel —
+The version is the tag without its `v`; the build number is the commit count on the tagged
+commit (`git rev-list --count HEAD`) — App Store Connect refuses any upload whose
+`CFBundleVersion` is not above the last one, whatever the version, and the count only goes
+up on `main`. Nothing is attached to a GitHub release — the store is the only channel —
 but the `.xcarchive` stays as a workflow artifact for two weeks, which is the build to launch
 locally if a review comes back (the store-signed payload cannot be launched outside the store).
 
