@@ -42,25 +42,35 @@ public struct NotchRootView: View {
     }
 
     public var body: some View {
-        Group {
-            if window.isExpanded {
+        let open = window.isExpanded
+        // The surface is the notch growing downwards: one black `NotchShape` that goes
+        // from the notch's own size to the panel's, with the content laid out at full
+        // size inside it and clipped by it. Collapsed, it is exactly the notch — pixels
+        // that do not exist — so nothing shows. The window itself never moves.
+        ZStack(alignment: .top) {
+            if open {
                 expanded
-            } else {
-                Color.clear
+                    .frame(width: window.panelSize.width, height: window.panelSize.height, alignment: .top)
+                    .transition(PanelStyle.contentTransition)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        // Without this the view never joins SwiftUI's focus system, and `onKeyPress`
-        // below would never fire.
-        .focusable(window.isExpanded)
-        .focusEffectDisabled()
-        .background(window.isExpanded ? PanelStyle.surface : .clear)
+        .frame(
+            width: open ? window.panelSize.width : window.notchSize.width,
+            height: open ? window.panelSize.height : window.notchSize.height,
+            alignment: .top
+        )
+        .background(PanelStyle.surface)
         .clipShape(
             NotchShape(
                 topCornerRadius: PanelStyle.topCornerRadius,
-                bottomCornerRadius: PanelStyle.bottomCornerRadius
+                bottomCornerRadius: open ? PanelStyle.bottomCornerRadius : PanelStyle.topCornerRadius
             )
         )
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        // Without this the view never joins SwiftUI's focus system, and `onKeyPress`
+        // below would never fire.
+        .focusable(open)
+        .focusEffectDisabled()
         .onChange(of: window.isExpanded) { _, expanded in
             if expanded {
                 onPanelOpened()

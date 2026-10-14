@@ -110,9 +110,26 @@ up to six seconds after the notch opens.
 
 Borderless `NSPanel`, `.nonactivatingPanel`, `.statusBar` level, transparent, forced
 `.darkAqua` appearance (the slab is black like the notch: semantic colors must
-resolve to light). It sits exactly on the notch using
-`NSScreen.auxiliaryTopLeftArea` / `auxiliaryTopRightArea` and `safeAreaInsets.top`. Collapsed,
-it is the size of the notch and draws nothing: those pixels do not exist.
+resolve to light). It is centred on the notch using
+`NSScreen.auxiliaryTopLeftArea` / `auxiliaryTopRightArea` and `safeAreaInsets.top`.
+
+The window itself **never moves or resizes**: it is always `NotchGeometry.windowRect`,
+the expanded panel plus a 16 pt overshoot margin, and it is only on screen while the
+panel is open (ordered out ~650 ms after a collapse). Everything that moves is drawn by
+SwiftUI inside it: one black `NotchShape` goes from the notch's own size to the panel's on
+a single spring (`PanelStyle.spring`), the content is laid out at full size inside that
+shape and clipped by it, and it comes in a beat later through `PanelStyle.contentTransition`
+(opacity + blur + a slight scale anchored at the top) and leaves before the shape closes.
+Collapsed, the shape is exactly the notch — pixels that do not exist — so nothing shows.
+The transparent margin lets pointer events through to whatever is behind (the window
+server hit-tests the alpha), which is also what lets the spring overshoot without being
+cropped by the window's edge. Reduce Motion replaces the spring with a short cross-fade.
+
+The previous design animated the window's frame with `NSAnimationContext` while SwiftUI ran
+its own spring on the content; measured at 120 Hz, the first rendered frame was already at
+80 % of the height, the black surface faded in over 170 ms with the content visible as a
+ghost, and the collapse cropped a fully laid-out panel in 100 ms. One clock, in SwiftUI,
+is what fixed it.
 
 It steals keyboard focus in only three cases: a text field on screen (OATH password,
 form), a confirmation in progress (the embedded biometric prompt needs it

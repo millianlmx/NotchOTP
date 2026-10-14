@@ -1,0 +1,222 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//NotchOTP//launch//FR
+CALSCALE:GREGORIAN
+X-WR-CALNAME:Travail
+BEGIN:VEVENT
+UID:notchotp-launch-0@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261015T180000
+DTEND;TZID=Europe/Paris:20261015T183000
+SUMMARY:NotchOTP — créer le compte Reddit + commenter r/yubikey
+DESCRIPTION:Compte neuf qui poste un lien = supprimé comme spam. Créer maintenant\, lire les règles de r/yubikey\, r/macapps\, r/MacOS\, laisser 3-4 commentaires utiles avant le 29/10.\nDétails : Marketing/twitter-thread.md § Reddit
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-1@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261019T180000
+DTEND;TZID=Europe/Paris:20261019T183000
+SUMMARY:NotchOTP — corriger le README (« not there yet » App Store)
+DESCRIPTION:Le thread lie le dépôt : le README doit dire que l'app est sur le Mac App Store (id6812282307). Vérifier aussi que out/notchotp.mp4 et notchotp-square.mp4 sont rendus.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-2@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261020T160000
+DTEND;TZID=Europe/Paris:20261020T161500
+SUMMARY:NotchOTP — teaser X (J−2)
+DESCRIPTION:Post de premier niveau : « Shipping something for YubiKey owners with a notch on Thursday. » + docs/panel-list.png. PAS de vidéo.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-3@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261022T153000
+DTEND;TZID=Europe/Paris:20261022T163000
+SUMMARY:NotchOTP — LANCEMENT : thread X (J0)
+DESCRIPTION:Tweets 1–12 de Marketing/twitter-thread.md. Vidéo notchotp.mp4 sur le tweet 1 UNIQUEMENT. Tweet 12 = crédit musique\, obligatoire. Épingler le tweet 1.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-4@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261022T163000
+DTEND;TZID=Europe/Paris:20261022T193000
+SUMMARY:NotchOTP — répondre à toutes les réponses (J0)
+DESCRIPTION:Répondre dans l'heure à chaque réponse \; l'algorithme compte les réponses aux réponses.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-5@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261023T160000
+DTEND;TZID=Europe/Paris:20261023T161500
+SUMMARY:NotchOTP — post autonome A : bug LAContext (J+1)
+DESCRIPTION:Texte « Standalone A » dans Marketing/twitter-thread.md. Pas de lien dans le corps \; lien App Store + notchotp-square.mp4 en réponse.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-6@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261026T160000
+DTEND;TZID=Europe/Paris:20261026T161500
+SUMMARY:NotchOTP — post autonome B : vidéo App Review scriptée (J+3)
+DESCRIPTION:Texte « Standalone B ». Lien vers le dépôt GitHub en réponse\, avec docs/panel-list.png.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-7@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261027T140000
+DTEND;TZID=Europe/Paris:20261027T180000
+SUMMARY:NotchOTP — Show HN (J+5)
+DESCRIPTION:https://news.ycombinator.com/submit — title + url seulement\, champ text vide.\nTitre : Show HN: NotchOTP – YubiKey OATH codes in the MacBook notch\nURL : https://github.com/millianlmx/NotchOTP\nPoster le premier commentaire tout de suite (texte dans Marketing/twitter-thread.md § Show HN). Rester 4 h\, répondre avec des faits\, ne JAMAIS demander de votes.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-8@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261029T160000
+DTEND;TZID=Europe/Paris:20261029T170000
+SUMMARY:NotchOTP — Reddit r/yubikey (J+7)
+DESCRIPTION:Post VIDÉO natif avec video/out/notchotp-square.mp4. Titre et premier commentaire : Marketing/twitter-thread.md § Reddit. Un seul sub par jour.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-9@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261030T160000
+DTEND;TZID=Europe/Paris:20261030T170000
+SUMMARY:NotchOTP — Reddit r/macapps (J+8)
+DESCRIPTION:Flair « Dev post ». Même vidéo\, même titre\, même premier commentaire.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-10@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261102T160000
+DTEND;TZID=Europe/Paris:20261102T170000
+SUMMARY:NotchOTP — Reddit r/MacOS (J+9)
+DESCRIPTION:Vérifier dans la barre latérale les jours où l'auto-promo est autorisée \; décaler si besoin.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+BEGIN:VEVENT
+UID:notchotp-launch-11@notchotp.app
+DTSTAMP:20261014T085450Z
+DTSTART;TZID=Europe/Paris:20261105T160000
+DTEND;TZID=Europe/Paris:20261105T163000
+SUMMARY:NotchOTP — post autonome C : réponses aux questions (J+14)
+DESCRIPTION:Relire toutes les questions reçues (X\, HN\, Reddit). Les répondre en un post\, annoncer la première mise à jour s'il y en a une. Ajouter les questions fréquentes au README.
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+BEGIN:VALARM
+TRIGGER:-P1D
+ACTION:DISPLAY
+DESCRIPTION:Rappel
+END:VALARM
+END:VEVENT
+END:VCALENDAR

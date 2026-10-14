@@ -1,0 +1,24 @@
+{
+  "name": "notchotp-video",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Launch video for NotchOTP, cut from the take Scripts/Marketing/record-clips.sh records",
+  "scripts": {
+    "start": "remotion studio",
+    "render": "remotion render NotchOTP out/notchotp.mp4",
+    "render:square": "remotion render NotchOTPSquare out/notchotp-square.mp4",
+    "still": "remotion still NotchOTP out/cover.png --frame=120"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.535",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "remotion": "^4.0.535"
+  },
+  "devDependencies": {
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  },
+  "type": "module"
+}

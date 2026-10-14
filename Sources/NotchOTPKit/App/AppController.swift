@@ -49,10 +49,13 @@ public final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegat
         window.start()
         service.start()
         #if DEBUG
-            // `-confirm` drives the whole path on real hardware: open the panel, wait for
-            // the listing, then ask for the first account. The sheet does the rest — the
-            // only thing left to provide is a finger.
-            if ProcessInfo.processInfo.arguments.contains("-confirm") {
+            // Scripted-run harness, debug builds only: `-panel` opens the panel and holds
+            // it there (the screenshots need it without a pointer), `-settings` opens the
+            // preferences window, and `-confirm` drives the whole path on real hardware —
+            // open the panel, wait for the listing, then ask for the first account. The
+            // sheet does the rest: the only thing left to provide is a finger.
+            let arguments = ProcessInfo.processInfo.arguments
+            if arguments.contains("-panel") || arguments.contains("-confirm") {
                 Task {
                     // Nobody is hovering the notch in a scripted run, and an unpinned panel
                     // collapses as soon as the pointer is seen elsewhere.
@@ -61,10 +64,18 @@ public final class AppController: NSObject, NSApplicationDelegate, NSMenuDelegat
                     for _ in 0..<60 where service.accounts.isEmpty {
                         try? await Task.sleep(for: .milliseconds(100))
                     }
-                    if let account = service.accounts.first {
+                    if arguments.contains("-confirm"), let account = service.accounts.first {
                         service.requestCode(for: account)
                     }
                 }
+            }
+            if let index = arguments.firstIndex(of: "-settings") {
+                // `-settings key` opens the YubiKey pane; the pane name is the raw value of
+                // `SettingsTab`, so a misspelt one lands on Général rather than nowhere.
+                let pane = arguments.indices.contains(index + 1)
+                    ? SettingsTab(rawValue: arguments[index + 1])
+                    : nil
+                showSettings(pane ?? .general)
             }
         #endif
         installStatusItem()

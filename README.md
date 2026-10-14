@@ -7,8 +7,8 @@ code is on your clipboard. The secrets never leave the YubiKey, nothing is store
 syncs, and **a code shown once does not come back without a new gesture**.
 
 <p align="center">
-  <img src="docs/panel-list.png" width="420" alt="The list: one confirmed code, the others still masked">
-  <img src="docs/panel-confirmation.png" width="420" alt="The confirmation sheet: the account, the masked code, the fingerprint">
+  <img src="docs/panel-list.png" width="380" alt="The list: one confirmed code, the others still masked">
+  <img src="docs/panel-confirmation.png" width="380" alt="The confirmation sheet: the account, the masked code, the fingerprint">
 </p>
 
 ---
@@ -55,6 +55,11 @@ syncs, and **a code shown once does not come back without a new gesture**.
 
 ## Install
 
+**Mac App Store** — [NotchOTP, $2.99](https://apps.apple.com/app/id6812282307): signed,
+sandboxed, updated by the store. No account, no telemetry, no in-app purchase.
+
+**From source** — the same app, built and signed by you:
+
 ```bash
 git clone https://github.com/millianlmx/NotchOTP.git
 cd NotchOTP
@@ -68,7 +73,7 @@ settings — it will start quietly in the menu bar.
 There is no `.xcodeproj`: SwiftPM builds, and the script assembles and signs the bundle. One
 single dependency, [YubiKit](https://github.com/Yubico/yubikit-swift), pinned at 1.3.0. The
 signature is ad hoc, carrying the smart-card entitlement — that is what lets the app see the
-key, and it is also why you build it yourself instead of downloading it.
+key.
 
 Demo mode, to see the panel without hardware (fake key, real TOTP maths, simulated Touch
 ID):
@@ -186,9 +191,10 @@ What the app actually sends to the key — the OATH applet APDUs, the TOTP/HOTP 
 the applet password, the `otpauth://` and Base32 rules — is in
 **[`docs/protocols.md`](docs/protocols.md)**.
 
-Shipping it on the Mac App Store is prepared, though the app is not there yet: sandbox
-entitlements, an XcodeGen spec and an archive script, plus the two review hurdles worth
-knowing about — **[`docs/app-store.md`](docs/app-store.md)**.
+The Mac App Store build: sandbox entitlements, an XcodeGen spec, an archive script, and
+the review hurdles — including the "recorded on physical hardware" video, which is scripted
+(`Scripts/record-review-video.sh`) — are in **[`docs/app-store.md`](docs/app-store.md)**.
+The launch video and thread are in **[`Marketing/`](Marketing/README.md)**.
 
 Tests:
 
@@ -206,9 +212,12 @@ binary, `swift run` included. The app produced by `Scripts/build-app.sh` carries
 **"Touch ID does nothing"** — the biometric view has to be in a window, and the panel has to
 be able to take keyboard focus while the prompt is up. That holds in the built app; on the
 other hand `swift test` cannot talk to the key at all (unsigned test binary), hence the
-`-confirm` flag, which exercises the real path:
+`-confirm` flag, which exercises the real path — but it lives in the debug build only
+(`#if DEBUG` in `AppController`), so the release build the script makes by default silently
+ignores it:
 
 ```bash
+Scripts/build-app.sh --debug
 open build/NotchOTP.app --args -confirm
 ```
 

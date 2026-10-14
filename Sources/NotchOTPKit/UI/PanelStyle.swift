@@ -21,11 +21,44 @@ enum PanelStyle {
     static let headerHeight: CGFloat = 44
     static let rowHeight: CGFloat = 48
 
-    static let spring = Animation.spring(response: 0.34, dampingFraction: 0.82)
+    /// The one clock of the panel: the surface grows out of the notch on it, the content
+    /// rides it, the sheet and the rows use it. Slow enough to be seen leaving the notch,
+    /// damped enough that the overshoot reads as weight rather than bounce.
+    static let spring = Animation.spring(response: 0.46, dampingFraction: 0.78)
+    /// Reduce Motion: a cross-fade, no travel.
+    static let reducedMotion = Animation.smooth(duration: 0.22)
     static let quick = Animation.smooth(duration: 0.18)
 
     /// The user asked for less movement in System Settings → Accessibility.
     static var reducesMotion: Bool { NSWorkspace.shared.accessibilityDisplayShouldReduceMotion }
+
+    /// How the content comes and goes inside the growing surface: it arrives a beat after
+    /// the surface has started moving, sharpening as it settles, and leaves quickly so the
+    /// surface closes on an empty panel instead of cropping a laid-out one.
+    static var contentTransition: AnyTransition {
+        if reducesMotion {
+            return .opacity
+        }
+        let veiled = PanelContentVeil(veiled: true)
+        let clear = PanelContentVeil(veiled: false)
+        return .asymmetric(
+            insertion: .modifier(active: veiled, identity: clear).animation(spring.delay(0.05)),
+            removal: .modifier(active: veiled, identity: clear).animation(.smooth(duration: 0.16))
+        )
+    }
+}
+
+/// Content behind frosted glass: faded, blurred and slightly smaller, pinned to the top
+/// where the notch is, so it reads as emerging from it.
+struct PanelContentVeil: ViewModifier {
+    var veiled: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .opacity(veiled ? 0 : 1)
+            .blur(radius: veiled ? 12 : 0)
+            .scaleEffect(veiled ? 0.94 : 1, anchor: .top)
+    }
 }
 
 /// Label on the left, rounded field on the right: the alignment macOS forms use.

@@ -14,3 +14,7 @@ xcuserdata/
 
 # macOS
 .DS_Store
+
+# Agent harness
+.omp/
+AGENTS.md

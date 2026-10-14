@@ -61,10 +61,21 @@ public struct NotchGeometry: Equatable, Sendable {
         )
     }
 
-    /// Frame to use in the given state. Collapsed, the panel is exactly the notch:
-    /// those pixels are not part of the display, so nothing shows.
-    public func frame(expanded: Bool) -> CGRect {
-        expanded ? expandedRect : notchRect
+    /// Room the window leaves around the expanded panel so the opening spring can
+    /// overshoot without being cropped by the window's edge.
+    public static let overshootMargin: CGFloat = 16
+
+    /// The window's frame, in every state: the expanded panel plus the overshoot margin
+    /// on the sides and the bottom. The window is never resized — the panel grows and
+    /// shrinks *inside* it, drawn by SwiftUI, and the transparent remainder lets pointer
+    /// events through to whatever is behind. Collapsed, nothing is drawn at all.
+    public var windowRect: CGRect {
+        CGRect(
+            x: expandedRect.minX - Self.overshootMargin,
+            y: expandedRect.minY - Self.overshootMargin,
+            width: expandedRect.width + 2 * Self.overshootMargin,
+            height: expandedRect.height + Self.overshootMargin
+        )
     }
 
     /// Hit area that counts as "the pointer is on the notch".

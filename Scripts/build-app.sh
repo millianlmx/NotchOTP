@@ -2,7 +2,8 @@
 # Assembles NotchOTP.app around the SwiftPM binary.
 #
 #   Scripts/build-app.sh            release build
-#   Scripts/build-app.sh --debug    debug build (enables the -demo harness)
+#   Scripts/build-app.sh --debug    debug build (enables the -panel / -settings / -confirm
+#                                   harness; -demo works in both configurations)
 set -euo pipefail
 
 cd "$(dirname "$0")/.."

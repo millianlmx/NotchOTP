@@ -10,8 +10,12 @@ public final class NotchWindowController {
     /// A notched screen exists and the panel is on it.
     public private(set) var isAvailable = false
     public private(set) var isExpanded = false
+    /// Size of the physical notch: what the panel is when collapsed.
+    public private(set) var notchSize: CGSize = .zero
+    /// Size of the expanded panel, as placed on this screen.
+    public private(set) var panelSize: CGSize = NotchGeometry.expandedSize
     /// Height of the physical notch; expanded content starts below it.
-    public private(set) var notchHeight: CGFloat = 0
+    public var notchHeight: CGFloat { notchSize.height }
     /// The panel currently owns the keyboard, so shortcuts and arrow keys reach it.
     public private(set) var hasKeyboardFocus = false
 
@@ -38,21 +42,22 @@ public final class NotchWindowController {
     private var workspaceObservers: [any NSObjectProtocol] = []
     private var pendingCollapse: Task<Void, Never>?
     private var pendingExpand: Task<Void, Never>?
+    /// Hides the window once the collapse animation has played out.
+    private var pendingHide: Task<Void, Never>?
 
     private static let collapseGrace = Duration.milliseconds(700)
     private static let expandDelay = Duration.milliseconds(140)
 
     public init() {
-        self.panel = NotchPanel(
-            contentRect: CGRect(origin: .zero, size: NotchGeometry.expandedSize)
-        )
+        self.panel = NotchPanel(contentRect: CGRect(origin: .zero, size: NotchGeometry.expandedSize))
     }
 
     // MARK: - Setup
 
     public func attach<Content: View>(_ content: Content) {
         let hosting = NSHostingView(rootView: content)
-        hosting.frame = CGRect(origin: .zero, size: NotchGeometry.expandedSize)
+        hosting.frame = CGRect(origin: .zero, size: panel.frame.size)
+        hosting.autoresizingMask = [.width, .height]
         panel.contentView = hosting
     }
 
@@ -74,6 +79,8 @@ public final class NotchWindowController {
         pendingCollapse = nil
         pendingExpand?.cancel()
         pendingExpand = nil
+        pendingHide?.cancel()
+        pendingHide = nil
         panel.orderOut(nil)
     }
 
@@ -198,16 +205,27 @@ public final class NotchWindowController {
         guard let (_, geometry) = notchedScreen() else {
             isAvailable = false
             self.geometry = nil
-            if isExpanded { setExpanded(false, animated: false) }
+            if isExpanded {
+                isExpanded = false
+                onVisibilityChange?(false)
+            }
             panel.orderOut(nil)
             return
         }
 
+        // Screen notifications fire for things that change nothing here (another window
+        // of ours appearing, a tooltip); a redundant `setFrame(display: true)` would still
+        // force a synchronous redraw of the open panel.
+        guard geometry != self.geometry else { return }
         self.geometry = geometry
         isAvailable = true
-        notchHeight = geometry.notchRect.height
-        panel.setFrame(geometry.frame(expanded: isExpanded), display: true)
-        panel.orderFrontRegardless()
+        notchSize = geometry.notchRect.size
+        panelSize = geometry.expandedRect.size
+        // The window never changes size: the panel is drawn inside it by SwiftUI, and
+        // the transparent remainder lets pointer events through. It is only on screen
+        // while there is something to draw.
+        panel.setFrame(geometry.windowRect, display: true)
+        if isExpanded { panel.orderFrontRegardless() }
     }
 
     // MARK: - Expansion
@@ -220,13 +238,14 @@ public final class NotchWindowController {
         setExpanded(false)
     }
 
-    private func setExpanded(_ expanded: Bool, animated: Bool = true) {
-        guard isAvailable, let geometry, isExpanded != expanded else { return }
+    private func setExpanded(_ expanded: Bool) {
+        guard isAvailable, geometry != nil, isExpanded != expanded else { return }
         Log.panel.notice("panel \(expanded ? "expanding" : "collapsing", privacy: .public)")
-        withAnimation(PanelStyle.spring) { isExpanded = expanded }
         cancelPendingCollapse()
         pendingExpand?.cancel()
         pendingExpand = nil
+        pendingHide?.cancel()
+        pendingHide = nil
 
         if expanded {
             panel.orderFrontRegardless()
@@ -234,27 +253,21 @@ public final class NotchWindowController {
             setKeyInput(false)
         }
 
-        let target = geometry.frame(expanded: expanded)
-        // The window animator needs AppKit's event loop. Without one (a test process) the
-        // animation never runs and the panel would be left at the wrong size — unusable.
-        if animated, NSApp.isRunning {
-            NSAnimationContext.runAnimationGroup { context in
-                context.duration = 0.34
-                context.timingFunction = CAMediaTimingFunction(controlPoints: 0.3, 1.25, 0.6, 1)
-                panel.animator().setFrame(target, display: true)
+        // One spring, owned by SwiftUI: the surface and the content follow the same clock,
+        // and a hover that reverses mid-flight retargets it instead of fighting a second
+        // animator. Reduce Motion gets a short cross-fade with no movement.
+        withAnimation(PanelStyle.reducesMotion ? PanelStyle.reducedMotion : PanelStyle.spring) {
+            isExpanded = expanded
+        }
+
+        if !expanded {
+            // Collapsed, the panel draws nothing: once the spring has settled the window can
+            // go, so no invisible surface sits over the user's windows.
+            pendingHide = Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .milliseconds(650))
+                guard let self, !Task.isCancelled, !self.isExpanded else { return }
+                self.panel.orderOut(nil)
             }
-            // Safety net: if the animation is interrupted, the panel must not be left at
-            // the wrong size.
-            Task { @MainActor [weak self] in
-                try? await Task.sleep(for: .milliseconds(500))
-                guard let self, self.isExpanded == expanded else { return }
-                Log.panel.notice("frame check: current=\(self.panel.frame.debugDescription, privacy: .public) target=\(target.debugDescription, privacy: .public)")
-                if self.panel.frame != target {
-                    self.panel.setFrame(target, display: true)
-                }
-            }
-        } else {
-            panel.setFrame(target, display: true)
         }
 
         onVisibilityChange?(expanded)

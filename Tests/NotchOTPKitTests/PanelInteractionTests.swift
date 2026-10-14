@@ -181,11 +181,14 @@ struct PanelInteractionTests {
         NSApp.windows.first { $0 is NSPanel && $0.isVisible }
     }
 
+    /// Points in these tests are in the panel's own space (420 × 340, origin bottom-left);
+    /// the window pads the panel by `overshootMargin` on the sides and the bottom.
     private func send(_ type: NSEvent.EventType, to window: NSWindow, at point: CGPoint, number: Int) {
+        let margin = NotchGeometry.overshootMargin
         guard
             let event = NSEvent.mouseEvent(
                 with: type,
-                location: point,
+                location: CGPoint(x: point.x + margin, y: point.y + margin),
                 modifierFlags: [],
                 timestamp: ProcessInfo.processInfo.systemUptime,
                 windowNumber: window.windowNumber,
@@ -232,22 +235,23 @@ struct PanelInteractionTests {
         }
     }
 
-    /// Pumps the run loop: a test process has no running event loop, so AppKit's window
-    /// grow animation would otherwise never finish and the panel would stay notch-sized.
+    /// Pumps the run loop: a test process has no running event loop, so the opening
+    /// spring would otherwise never play and the content never settle into place.
     private func settle(_ seconds: TimeInterval = 0.7) {
         RunLoop.current.run(until: Date().addingTimeInterval(seconds))
     }
 
-    /// Waits until the panel really is the expanded size before clicking inside it.
+    /// Waits for the panel window to be on screen, then for the opening spring to settle
+    /// before anything is clicked inside it.
     @discardableResult
     private func settleExpanded() -> NSWindow? {
         let deadline = Date().addingTimeInterval(2)
         var panel = visiblePanel()
-        while (panel?.frame.width ?? 0) < 300, Date() < deadline {
+        while panel == nil, Date() < deadline {
             RunLoop.current.run(until: Date().addingTimeInterval(0.05))
             panel = visiblePanel()
         }
-        settle(0.2)
+        settle(0.8)
         return panel
     }
 

@@ -37,11 +37,14 @@ private func notchGeometry(
     #expect(expanded.midX == geometry.notchRect.midX)
 }
 
-@Test func collapsedPanelIsExactlyTheNotch() throws {
+@Test func theWindowSurroundsTheExpandedPanelWithOvershootRoom() throws {
     let geometry = try #require(notchGeometry())
-    // Hidden behind the notch: same rect, no lip, nothing to draw.
-    #expect(geometry.frame(expanded: false) == geometry.notchRect)
-    #expect(geometry.frame(expanded: true) == geometry.expandedRect)
+    let window = geometry.windowRect
+    #expect(window.maxY == geometry.expandedRect.maxY, "hung from the top edge like the panel")
+    #expect(window.midX == geometry.expandedRect.midX)
+    #expect(window.width == geometry.expandedRect.width + 2 * NotchGeometry.overshootMargin)
+    #expect(window.height == geometry.expandedRect.height + NotchGeometry.overshootMargin)
+    #expect(window.contains(geometry.notchRect))
     #expect(!geometry.hoverRect.isEmpty)
 }
 
